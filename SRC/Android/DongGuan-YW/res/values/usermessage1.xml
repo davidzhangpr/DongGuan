@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string name="err_connect_server">连接服务器失败,是否重试?</string>
+	<string name="err_transfer_data">数据发送失败,是否重试?</string>
+	<string name="err_timeout">数据传输超时,是否重试?</string>
+	<string name="err_login_failed">用户名或者密码错误</string>
+	<string name="err_exit">确认退出？</string>
+	<string name="err_uname_null">用户名不能为空！</string>
+	<string name="err_upwd_null">密码不能为空！</string>
+	<string name="msg_login">正在验证用户信息,请稍候!</string>
+	<string name="msg_load_routplan">正在更新计划信息，请稍候!</string>
+	<string name="msg_load_account">验证成功，正在更新门店信息，请稍候!</string>
+	<string name="msg_load_product">正在更新产品信息，请稍候!</string>
+	<string name="msg_load_delivery_address">正在更新送货地址信息，请稍候!</string>
+	<string name="msg_load_supplier">正在更新供应商信息，请稍候!</string>
+	<string name="msg_load_supplier_item">正在更新供应商产品关系，请稍候!</string>
+	<string name="msg_load_account_item">正在更新客户产品关系，请稍候!</string>
+	<string name="msg_load_account_supplier">正在更新客户供应商关系，请稍候!</string>
+	<string name="msg_load_item_delivery">正在更新产品送货地址关系，请稍候!</string>
+	<string name="msg_load_inventory">正在更新产品库存信息，请稍候!</string>
+	<string name="msg_load_price">正在更新产品价格信息，请稍候!</string>
+	<string name="msg_load_submit_order">正在提交订单数据，请稍候!</string>
+	
+	<string name="msg_load_query_report">正在查询报表信息，请稍候!</string>
+	
+	<string name="msg_show_report_null">当前时间段无数据，请重新选择时间！</string>
+
+	<string name="msg_show_sync_success">订单上传成功!</string>
+	<string name="msg_show_save_success">订单保存成功!</string>
+	<string name="msg_show_save_failed">订单保存失败!</string>
+	
+	<string name="msg_show_select_account">请先选择客户</string>
+	<string name="msg_show_select_supplier">请先选择供应商</string>
+	<string name="msg_show_select_address">请先选择送货地址</string>
+
+	<string name="msg_show_input_item">您未填写产品订单</string>
+	
+	<string name="msg_setpassword">正在修改密码,请稍候!</string>
+	<string name="msg_loaddeviceinfo">正在查询设备信息,请稍候!</string>
+	<string name="msg_show_refresh">正在更新订单状态，请稍候!</string>
+	<!--
+
+		<string name="msg_show__sync_failed">订单上传失败</string>
+	-->
+</resources>

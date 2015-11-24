@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="background">#F1F1F1</color>
+    <color name="logintitle">#333333</color>
+    <color name="logincontent">#c6c6c6</color>
+    <color name="loginsupport">#d6d6d6</color>
+    <color name="selectrect">#FF6D00</color>
+    <color name="black">#000000</color>
+    <color name="white">#FFFFFF</color>
+    <color name="red">#FF0000</color>
+    <color name="transparent">#00000000</color>
+    <color name="grey">#6D6D6D</color>
+    <color name="top_bg">#3A318D</color>
+
+</resources>

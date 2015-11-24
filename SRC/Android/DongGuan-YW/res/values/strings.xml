@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">东冠集团－业务</string>
+    <string name="folder_name">DongGuan-YW/</string>
+    <string name="title_login">系统登录</string>
+    <string name="tv_username">账号:</string>
+    <string name="hint_username">请输入您的用户名</string>
+    <string name="tv_password">密码:</string>
+    <string name="hint_userpwd">请输入您的密码</string>
+    
+    <string name="txt_supportnumber">服务电话:400 672 9851</string>
+    <string name="txt_login">登录</string>
+    <string name="txt_exit">退出</string>
+    <string name="txt_language">English</string>
+    <string name="txt_version">版本号:YW 1.0</string>
+    <string name="txt_alert">警告</string>
+    <string name="txt_info">提示</string>
+    <string name="button_ok">确定</string>
+    <string name="button_view">查看</string>
+    <string name="button_edit">编辑</string>
+    <string name="button_delete">删除</string>
+    <string name="title_select">请选择</string>
+    <string name="txt_to">到</string>
+    <string name="title_supplier">供应商</string>
+    <string name="title_address">送货地址</string>
+    <string name="order_not_sync">未上传</string>
+    <string name="order_sync_failed">上传失败</string>
+    <string name="invenrory_null">无</string>
+    <string name="invenrory_enough">有</string>
+
+    <!-- Main Menu -->
+    <string name="title_main_menu">主菜单</string>
+    <string name="txt_new_order">新建订单</string>
+    <string name="txt_upload">订单上传</string>
+    <string name="txt_download">同步数据</string>
+    <string name="txt_cutomer_query">客户查询</string>
+    <string name="txt_produt_query">产品查询</string>
+    <string name="txt_supplier_query">订单查询</string>
+    <string name="txt_dashboard">报表查询</string>
+    <string name="txt_sys_setup">系统设定</string>
+    <string name="txt_order_list">订单列表</string>
+    <string name="txt_order_sequence">序号：</string>
+    <string name="txt_order_sfdc_no">订单号：</string>
+    <string name="txt_order_time">时间：</string>
+    <string name="txt_order_total_num">总数量：</string>
+    <string name="txt_order_customer">客户：</string>
+    <string name="txt_order_total_price">总金额：</string>
+    <string name="txt_order_status">状态：</string>
+
+    <!-- Order Creation -->
+    <string name="title_order_cration">新建订单</string>
+    <string name="txt_detailed_list">清单</string>
+    <string name="txt_cancel">取消</string>
+    <string name="txt_customer">客户：</string>
+    <string name="txt_look_up">查看</string>
+    <string name="txt_syn">同步</string>
+    <string name="txt_supplier">供应商：</string>
+    <string name="txt_address">地址：</string>
+    <string name="txt_note">Note：</string>
+    <string name="txt_last_syn_time">上次同步时间：</string>
+    <string name="txt_product">产品：</string>
+    <string name="txt_wrap">包装：</string>
+    <string name="txt_order_product_number">订货数：</string>
+    <string name="txt_total_price">总金额：</string>
+    <string name="txt_product_price">价格：</string>
+    <string name="txt_product_inventory_status">库存状态：</string>
+    <string name="ps_select">请选择</string>
+    <string name="hint_code_name">输入code或名称</string>
+
+    <!-- Order Info -->
+
+    <string name="title_order_info">订单内容</string>
+    <string name="txt_orderInfo_save">保存</string>
+    <string name="txt_orderInfo_submit">提交</string>
+    <string name="txt_orderInfo_back">返回</string>
+    <string name="txt_orderInfo_totalPrice">订单总金额：</string>
+    <string name="title_order_list">清单</string>
+
+    <!-- Product Entering -->
+    <string name="title_produt_entering">产品输入</string>
+    <string name="txt_order">订货数：</string>
+    <string name="txt_product_name">产品名称：</string>
+    <string name="txt_ok">确定</string>
+
+    <!-- Produt Entering Item -->
+    <string name="txt_gift_price">价值：</string>
+    <string name="txt_gift_number">赠品数量：</string>
+
+    <!-- Address Info -->
+    <string name="txt_title_address_info">地址信息</string>
+    <string name="txt_address_name">名称：</string>
+    <string name="txt_address_no">No：</string>
+    <string name="txt_address_contact">联系人：</string>
+    <string name="txt_address_zip_code">邮编：</string>
+    <string name="txt_address_fax">传真：</string>
+    <string name="txt_address_phone">电话：</string>
+
+    <!-- Customer Info -->
+    <string name="txt_customer_title">客户信息</string>
+    <string name="txt_customer_name">客户名称</string>
+    <string name="txt_customer_code">编码</string>
+    <string name="txt_customer_phone">电话：</string>
+    <string name="txt_customer_address">地址：</string>
+    <string name="txt_customer_fax">传真：</string>
+    <string name="txt_customer_type">类型：</string>
+    <string name="txt_customer_account_period">账期：</string>
+    <string name="txt_customer_prompt">付款期限：</string>
+    <string name="txt_customer_contact">联系人：</string>
+    <string name="btn_back">返回</string>
+    <string name="title_account_query">客户查询</string>
+    
+        
+
+    <!-- 星期 -->
+    <string name="Mon">一</string>
+    <string name="Tue">二</string>
+    <string name="Wed">三</string>
+    <string name="Thu">四</string>
+    <string name="Fri">五</string>
+    <string name="Sat">六</string>
+    <string name="Sun">日</string>
+    <string name="jihuawai">计划外</string>
+    <string name="dangrbf">当日拜访</string>
+
+</resources>

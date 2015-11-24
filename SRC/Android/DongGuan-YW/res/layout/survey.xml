@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@color/black"
+    android:gravity="center_horizontal"
+    android:orientation="vertical" >
+
+    <RelativeLayout
+        android:id="@+id/title_line"
+        android:layout_width="fill_parent"
+        android:layout_height="45dip"
+        android:background="@color/top_bg" >
+
+        <Button
+            android:id="@+id/back"
+            android:layout_width="50dip"
+            android:layout_height="40dip"
+            android:layout_alignParentLeft="true"
+            android:layout_centerInParent="true"
+            android:layout_marginLeft="8dip"
+            android:background="@drawable/back_df"
+            android:gravity="center"
+            android:textColor="#ffffff"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="80dip"
+            android:layout_height="35dip"
+            android:layout_centerInParent="true"
+            android:gravity="center"
+            android:text="问卷调查"
+            android:textColor="#ffffff"
+            android:textSize="18sp" />
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/message_list"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_above="@+id/line_rpt_button"
+        android:layout_below="@id/title_line"
+        android:background="@color/background"
+        android:orientation="vertical" >
+    </LinearLayout>
+
+</RelativeLayout>
+

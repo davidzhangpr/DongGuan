@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@color/white"
+    android:gravity="center_horizontal"
+    android:orientation="vertical" >
+
+    <RelativeLayout
+        android:id="@+id/title_line"
+        android:layout_width="fill_parent"
+        android:layout_height="45dip"
+        android:background="@color/top_bg" >
+
+        <ImageView
+            android:id="@+id/back"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="10dp"
+            android:src="@drawable/back_df" />
+
+<!--         <TextView
+            android:id="@+id/txt"
+            android:layout_width="wrap_content"
+            android:layout_height="35dip"
+            android:layout_centerInParent="true"
+            android:gravity="center"
+            android:text="电子资料"
+            android:textColor="#ffffff"
+            android:textSize="17sp" /> -->
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/search"
+        android:layout_width="fill_parent"
+        android:layout_height="50dip"
+        android:layout_below="@+id/title_line"
+        android:background="#f1f1f1"
+        android:padding="5dip" >
+
+        <EditText
+            android:id="@+id/searchclient"
+            android:layout_width="fill_parent"
+            android:layout_height="36dip"
+            android:layout_centerVertical="true"
+            android:background="@drawable/round"
+            android:drawableLeft="@drawable/search"
+            android:drawablePadding="10dip"
+            android:gravity="center_vertical"
+            android:hint="请输入进行搜索"
+            android:paddingLeft="20dip"
+            android:textColor="@color/black"
+            android:textSize="14sp" >
+        </EditText>
+    </RelativeLayout>
+
+    <ScrollView
+        android:id="@+id/sc_electronic"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_below="@+id/search"
+        android:orientation="vertical" >
+
+        <LinearLayout
+            android:id="@+id/line_electronic"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+        </LinearLayout>
+    </ScrollView>
+
+</RelativeLayout>

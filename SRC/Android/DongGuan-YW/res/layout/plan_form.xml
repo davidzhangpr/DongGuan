@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@drawable/bg"
+    android:gravity="center_horizontal"
+    android:orientation="vertical" >
+
+    <RelativeLayout
+        android:id="@+id/title_line"
+        android:layout_width="fill_parent"
+        android:layout_height="45dp"
+        android:background="@color/top_bg" >
+
+        <Button
+            android:id="@+id/back"
+            android:layout_width="50dip"
+            android:layout_height="40dip"
+            android:layout_alignParentLeft="true"
+            android:layout_centerInParent="true"
+            android:layout_marginLeft="8dip"
+            android:background="@drawable/back_df"
+            android:gravity="center"
+            android:textColor="@color/white"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/txt"
+            android:layout_width="80dip"
+            android:layout_height="35dip"
+            android:layout_centerInParent="true"
+            android:gravity="center"
+            android:text="计划列表"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/addplan"
+            android:layout_width="60dip"
+            android:layout_height="30dip"
+            android:layout_alignParentRight="true"
+            android:layout_centerInParent="true"
+            android:layout_marginRight="10dip"
+            android:background="@drawable/addhoc"
+            android:gravity="center"
+            android:text="设定"
+            android:textColor="#ffffff"
+            android:textSize="16sp" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/selectmonth"
+        android:layout_width="fill_parent"
+        android:layout_height="40dip"
+        android:layout_below="@+id/title_line"
+        android:background="@drawable/mentou_bg"
+        android:paddingBottom="2dip"
+        android:paddingLeft="10dip"
+        android:paddingRight="10dip"
+        android:paddingTop="2dip" >
+
+        <ImageButton
+            android:id="@+id/backed"
+            android:layout_width="20dip"
+            android:layout_height="20dip"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="15dip"
+            android:layout_toLeftOf="@+id/month"
+            android:background="@drawable/backed"
+            android:gravity="center" >
+        </ImageButton>
+
+        <TextView
+            android:id="@+id/month"
+            android:layout_width="100dip"
+            android:layout_height="30dip"
+            android:layout_centerInParent="true"
+            android:gravity="center"
+            android:text="2013-05-05"
+            android:textColor="@color/black"
+            android:textSize="14sp" >
+        </TextView>
+
+        <ImageButton
+            android:id="@+id/forward"
+            android:layout_width="20dip"
+            android:layout_height="20dip"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="15dip"
+            android:layout_toRightOf="@+id/month"
+            android:background="@drawable/forward"
+            android:gravity="center" >
+        </ImageButton>
+        
+        <Button
+            android:id="@+id/today"
+            android:layout_width="35dip"
+            android:layout_height="30dip"
+            android:layout_alignParentRight="true"
+            android:layout_centerInParent="true"
+            android:background="@drawable/addhoc"
+            android:gravity="center"
+            android:text="今日"
+            android:textColor="@color/white"
+            android:textSize="12sp" >
+        </Button>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/selectdate"
+        android:layout_width="fill_parent"
+        android:layout_height="55dip"
+        android:layout_below="@+id/selectmonth"
+        android:background="@drawable/mentou_bg"
+        android:paddingBottom="2dip"
+        android:paddingTop="2dip" >
+
+        <ImageButton
+            android:id="@+id/fastbacked"
+            android:layout_width="18dip"
+            android:layout_height="18dip"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:background="@drawable/fastbacked"
+            android:gravity="center" >
+        </ImageButton>
+
+        <ViewFlipper
+            android:id="@+id/flipday"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_centerInParent="true"
+            android:layout_toLeftOf="@+id/fastforward"
+            android:layout_toRightOf="@+id/fastbacked"
+            android:gravity="center"
+            android:orientation="horizontal" >
+
+            <LinearLayout
+                android:id="@+id/day"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_centerInParent="true"
+                android:layout_toLeftOf="@+id/fastforward"
+                android:layout_toRightOf="@+id/fastbacked"
+                android:gravity="center"
+                android:orientation="horizontal" >
+            </LinearLayout>
+        </ViewFlipper>
+        <!--  -->
+
+        <ImageButton
+            android:id="@+id/fastforward"
+            android:layout_width="18dip"
+            android:layout_height="18dip"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:background="@drawable/fastforward"
+            android:gravity="center" >
+        </ImageButton>
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/planlist"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_below="@+id/selectdate"
+        android:orientation="horizontal" >
+    </LinearLayout>
+
+</RelativeLayout>

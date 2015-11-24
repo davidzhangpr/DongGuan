@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@drawable/bg"
+    android:gravity="center_horizontal"
+    android:orientation="vertical" >
+
+    <RelativeLayout
+        android:id="@+id/title_line"
+        android:layout_width="fill_parent"
+        android:layout_height="45dip"
+        android:background="@color/top_bg" >
+         <Button
+            android:id="@+id/back"
+            android:layout_width="50dp"
+            android:layout_height="40dp"
+            android:layout_alignParentLeft="true"
+            android:layout_centerInParent="true"
+            android:layout_marginLeft="8dip"
+            android:background="@drawable/back_df"
+            android:gravity="center" />
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="35dip"
+            android:layout_centerInParent="true"
+            android:gravity="center"
+            android:text="主菜单"
+            android:textColor="#ffffff"
+            android:textSize="18sp" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/comephoto"
+        android:layout_width="fill_parent"
+        android:layout_height="55dip"
+        android:layout_below="@+id/title_line"
+        android:background="@drawable/mentou_bg"
+        android:paddingBottom="2dip"
+        android:paddingLeft="20dip"
+        android:paddingRight="20dip"
+        android:paddingTop="2dip" >
+
+        <ImageView
+            android:id="@+id/startphoto"
+            android:layout_width="60dip"
+            android:layout_height="55dip"
+            android:layout_alignParentLeft="true"
+            android:layout_centerInParent="true"
+            android:scaleType="centerInside" >
+        </ImageView>
+
+        <Button
+            android:id="@+id/start"
+            android:layout_width="70dip"
+            android:layout_height="30dip"
+            android:layout_alignParentRight="true"
+            android:layout_centerInParent="true"
+            android:background="@drawable/addhoc"
+            android:gravity="center"
+            android:text="开始拜访"
+            android:textColor="@color/white"
+            android:textSize="14sp" >
+        </Button>
+    </RelativeLayout>
+
+    <ScrollView
+        android:id="@+id/sv_content"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/leavere"
+        android:layout_below="@+id/comephoto"
+        android:scrollbars="vertical" >
+    </ScrollView>
+
+    <RelativeLayout
+        android:id="@+id/leavere"
+        android:layout_width="fill_parent"
+        android:layout_height="55dip"
+        android:layout_above="@+id/line_buttom"
+        android:background="@drawable/mentou_bg"
+        android:paddingBottom="2dip"
+        android:paddingLeft="20dip"
+        android:paddingRight="20dip"
+        android:paddingTop="2dip" >
+
+        <ImageView
+            android:id="@+id/leavephoto"
+            android:layout_width="60dip"
+            android:layout_height="55dip"
+            android:layout_alignParentLeft="true"
+            android:layout_centerInParent="true"
+            android:scaleType="centerInside" >
+        </ImageView>
+
+        <Button
+            android:id="@+id/leave"
+            android:layout_width="70dip"
+            android:layout_height="30dip"
+            android:layout_alignParentRight="true"
+            android:layout_centerInParent="true"
+            android:background="@drawable/addhoc"
+            android:gravity="center"
+            android:text="结束拜访"
+            android:textColor="@color/white"
+            android:textSize="14sp" >
+        </Button>
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/line_buttom"
+        android:layout_width="fill_parent"
+        android:layout_height="0dip"
+        android:layout_alignParentBottom="true"
+        android:background="@color/black"
+        android:orientation="horizontal"
+        android:gravity="center_vertical" >
+    </LinearLayout>
+
+</RelativeLayout>
