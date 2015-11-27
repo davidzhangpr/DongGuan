@@ -8,7 +8,7 @@ import java.util.List;
 
 import markettracker.util.CButton;
 import markettracker.util.CTable;
-import markettracker.util.CTextView; 
+import markettracker.util.CTextView;
 import markettracker.util.SyncDataApp;
 import markettracker.util.TemplateFactory;
 import markettracker.util.Tool;
@@ -42,7 +42,6 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.LinearLayout.LayoutParams;
 
 public class Frm_Menu extends Activity implements OnClickListener {
@@ -63,29 +62,29 @@ public class Frm_Menu extends Activity implements OnClickListener {
 	private Fields comleteRpt = new Fields();
 
 	private CTextView selectTView;
-	private String clientId, type, key;
+	private String clientId, type, key, facialdiscount;
 	private LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT,
 			LayoutParams.WRAP_CONTENT);
 
 	private SyncDataApp application;
-	
-	private RelativeLayout comephoto,leavere;
+
+	private RelativeLayout comephoto, leavere;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.rpt_form);
-		
+
 		application = (SyncDataApp) this.getApplication();
 		application.pushActivity(this);
-		
+
 		init();
 	}
 
 	private void exit() {
 		setResult(-100);
-		
+
 		application.pullActivity(this);
 		this.finish();
 	}
@@ -95,6 +94,7 @@ public class Frm_Menu extends Activity implements OnClickListener {
 		initActivity();
 		clientId = this.getIntent().getStringExtra("teminalCode");
 		type = this.getIntent().getStringExtra("type");
+		facialdiscount = this.getIntent().getStringExtra("facialdiscount");
 
 		key = this.getIntent().getStringExtra("key");
 		exit = (Button) findViewById(R.id.back);
@@ -112,14 +112,14 @@ public class Frm_Menu extends Activity implements OnClickListener {
 
 		leavePhoto = (ImageView) findViewById(R.id.leavephoto);
 		leavePhoto.setImageBitmap(getBitmap(PhotoType.CHECKOUT));
-		
-		if(type.equals("12")){
+
+		if (type.equals("12")) {
 			comephoto = (RelativeLayout) findViewById(R.id.comephoto);
 			comephoto.setVisibility(View.GONE);
 			leavere = (RelativeLayout) findViewById(R.id.leavere);
 			leavere.setVisibility(View.GONE);
 		}
-		
+
 		initTemGroupList();
 		initPage();
 
@@ -159,13 +159,13 @@ public class Frm_Menu extends Activity implements OnClickListener {
 	}
 
 	private void initTemGroupList() {
-		 if ("-1".equals(type)){	//事件
-			 temGroupList = TemplateFactory.getTASKTemplateGroupList();
-		 } else if("1".equals(type)){	//门店
-			 temGroupList = TemplateFactory.getBrandTemplateGroupList(context);
-		 } else if("12".equals(type)){	//销售日报
-			 temGroupList = TemplateFactory.getXSRBTemplateGroupList(context);
-		 }
+		if ("0".equals(facialdiscount)) { // 门店
+			temGroupList = TemplateFactory.getTemplateGroupList(context);
+		} else if ("10".equals(facialdiscount)) { // 经销商
+			temGroupList = TemplateFactory.getDealersTemplateGroupList(context);
+		} else {	// 事件
+			temGroupList = TemplateFactory.getTASKTemplateGroupList();
+		}
 	}
 
 	private LinearLayout getMainLine() {
@@ -176,7 +176,7 @@ public class Frm_Menu extends Activity implements OnClickListener {
 
 		List<String> list = new ArrayList<String>();
 		list = Sqlite.getTemplateIdList(context, clientId, key);
-		for (String template : list){
+		for (String template : list) {
 			comleteRpt.put(template, "true");
 		}
 
@@ -247,7 +247,8 @@ public class Frm_Menu extends Activity implements OnClickListener {
 		try {
 			Tool.createPhotoFile();
 			Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);// "android.media.action.IMAGE_CAPTURE"
-			intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(new File("/sdcard/"+getResources().getString(R.string.folder_name)+"photo//test.JPEG")));
+			intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(
+					new File("/sdcard/" + getResources().getString(R.string.folder_name) + "photo//test.JPEG")));
 			startActivityForResult(intent, type);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -321,7 +322,7 @@ public class Frm_Menu extends Activity implements OnClickListener {
 	}
 
 	private void saveRpt(String type) {
-		Template template = TemplateFactory.getTemplate(getContext(),type);
+		Template template = TemplateFactory.getTemplate(getContext(), type);
 		SObject report = Sqlite.getReport(context, template, clientId, 1, key);
 		report.setField("ClientType", this.type);
 		Sqlite.saveReport(context, report);
@@ -329,10 +330,10 @@ public class Frm_Menu extends Activity implements OnClickListener {
 
 	private void toRpt(View v) {
 		if (v instanceof CTextView) {
-			if(type.equals("12")){	//销售日报
+			if (type.equals("12")) { // 销售日报
 				selectTView = (CTextView) v;
 				toRptClass();
-			}else{
+			} else {
 				if (startCall) {
 					selectTView = (CTextView) v;
 					toRptClass();
@@ -359,43 +360,17 @@ public class Frm_Menu extends Activity implements OnClickListener {
 	private void toRptClass() {
 		Intent i;
 		
-		
-		if("1".equals(selectTView.getTemplateType())){	//生意表现
-			if(!Tool.isConnect(context)){
-				Tool.showErrMsg(context, "网络连接失败，请确认网络连接！");
-			}else{
-				 i = new Intent(context, Frm_ShowData.class);
-				i.putExtra("name", "生意表现");
-				i.putExtra("ClientId", clientId);
-				startActivityForResult(i, 1000);
-			}
-			return;
-		}
-		else if("-1".equals(type) || selectTView.getTemplateType().startsWith("9") || selectTView.getTemplateType().startsWith("10") 
-				|| "11".equals(selectTView.getTemplateType()) 
-				|| "12".equals(type)){	//事件、BA检查报告、竞品报告、拜访总结、销售日报
-			i = new Intent(getContext(), Frm_Rpt.class);
-		}else{
+		if("0".equals(facialdiscount)){	//门店
 			i = new Intent(getContext(), Frm_ReportMenu.class);
-			
-			//存放品牌ID
-			int brandType = Integer.parseInt(selectTView.getTemplateType());
-			Rms.setBrandID(context, (brandType-568*1000)+"");
+		}else{	//经销商，事件
+			i = new Intent(getContext(), Frm_Rpt.class);
 		}
 		
 		i.putExtra("type", selectTView.getTemplateType());
-		
-		if("12".equals(type)){
-			i.putExtra("name", "销售日报");
-			i.putExtra("date", selectTView.getTemplateName());
-			i.putExtra("clienttype", "1");
-		}else{
-			i.putExtra("name", selectTView.getTemplateName());
-			i.putExtra("clienttype", type);
-		}
-		
+		i.putExtra("name", selectTView.getTemplateName());
 		i.putExtra("teminalCode", clientId);
-		i.putExtra("terminalname", getIntent().getStringExtra("name"));
+		i.putExtra("terminalname", this.getIntent().getStringExtra("name"));
+		i.putExtra("clienttype", type);
 		i.putExtra("displaytype", getIntent().getStringExtra("displaytype"));
 		i.putExtra("key", key);
 
@@ -436,7 +411,8 @@ public class Frm_Menu extends Activity implements OnClickListener {
 					final Bitmap bm = Tool.lessenUriImage();
 
 					String date = Tool.getCurrPhotoTime();
-					Bitmap bm1 = Tool.generatorContactCountIcon(bm, date, this.getIntent().getStringExtra("name"),start.getText().toString(),context);
+					Bitmap bm1 = Tool.generatorContactCountIcon(bm, date, this.getIntent().getStringExtra("name"),
+							start.getText().toString(), context);
 
 					photo.setShotTime(date);
 					photo.setPhoto(Tool.Bitmap2Bytes(bm1));
@@ -451,8 +427,8 @@ public class Frm_Menu extends Activity implements OnClickListener {
 					final Bitmap bm = Tool.lessenUriImage();
 
 					String date = Tool.getCurrPhotoTime();
-					Bitmap bm1 = Tool.generatorContactCountIcon(bm, date, this.getIntent().getStringExtra("name"),leave.getText().toString(),
-							context);
+					Bitmap bm1 = Tool.generatorContactCountIcon(bm, date, this.getIntent().getStringExtra("name"),
+							leave.getText().toString(), context);
 
 					photo.setShotTime(date);
 					photo.setPhoto(Tool.Bitmap2Bytes(bm1));
@@ -529,11 +505,11 @@ public class Frm_Menu extends Activity implements OnClickListener {
 	}
 
 	private void finishActivity() {
-		if("12".equals(type)){	//销售日报
+		if ("12".equals(type)) { // 销售日报
 			setResult(RESULT_OK);
 			application.pullActivity(this);
 			this.finish();
-		}else{
+		} else {
 			if (startCall) {
 				if (checkData()) {
 					if (endCall) {
@@ -567,40 +543,34 @@ public class Frm_Menu extends Activity implements OnClickListener {
 	public void initActivity() {
 		this.activity = Frm_Menu.this;
 	}
-	
+
 	@Override
-	protected void onResume()
-	{
+	protected void onResume() {
 		Tool.setAutoTime(context);
-		
-		if (!Rms.getLoginDate(context).equals(Tool.getCurrDate()))
-		{
+
+		if (!Rms.getLoginDate(context).equals(Tool.getCurrDate())) {
 			showTimeoutDialog();
 		}
 		super.onResume();
 	}
-	
-	private void showTimeoutDialog()
-	{
+
+	private void showTimeoutDialog() {
 		Builder dialog = new Builder(context);
 		dialog.setTitle("警告");
 		dialog.setMessage("登录超时,请重新登录！");
-		dialog.setPositiveButton("确定", new DialogInterface.OnClickListener()
-		{
-			public void onClick(DialogInterface arg0, int arg1)
-			{
+		dialog.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface arg0, int arg1) {
 				exits();
 			}
 		});
 		dialog.setCancelable(false);
 		dialog.show();
 	}
-	
-	private void exits()
-	{
+
+	private void exits() {
 		application.pullActivity(this);
 		this.finish();
-		
+
 		application.exit();
 		Intent intent = new Intent(this, Frm_Login.class);
 		startActivity(intent);

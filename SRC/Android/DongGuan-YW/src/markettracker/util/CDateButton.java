@@ -59,10 +59,11 @@ public class CDateButton extends LinearLayout
 		this.setOrientation(LinearLayout.VERTICAL);
 		TextView tv = new TextView(context);
 		if (data.getStrValue("week").equals("周六")
-				|| data.getStrValue("week").equals("周日"))
+				|| data.getStrValue("week").equals("周日")){
 			tv.setTextColor(getResources().getColor(R.color.red));
-		else
+		}else{
 			tv.setTextColor(getResources().getColor(R.color.black));
+		}
 		tv.setTextSize(10);
 		tv.setGravity(Gravity.CENTER);
 		tv.setText(data.getStrValue("week"));

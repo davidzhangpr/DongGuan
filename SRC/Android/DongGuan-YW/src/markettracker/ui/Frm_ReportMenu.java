@@ -50,13 +50,11 @@ public class Frm_ReportMenu extends Activity implements OnClickListener {
 	private List<ButtonConfig> buttonlist;
 	private ScrollView mainView;
 	private TextView title;
-	private boolean startCall = false, endCall = false;
-	private static final int TAKE_PICTURE_START = 3021, TAKE_PICTURE_LEAVE = 3022, SURVEY = 3023;
 
 	private Fields comleteRpt = new Fields();
 
 	private CTextView selectTView;
-	private String clientId, type, key;
+	private String clientId, type, key, name;
 	private LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT,
 			LayoutParams.WRAP_CONTENT);
 
@@ -76,6 +74,7 @@ public class Frm_ReportMenu extends Activity implements OnClickListener {
 		init();
 	}
 
+	@SuppressWarnings("unused")
 	private void exit() {
 		setResult(-100);
 		
@@ -86,6 +85,8 @@ public class Frm_ReportMenu extends Activity implements OnClickListener {
 	private void init() {
 		initContext();
 		initActivity();
+		initTitle();
+		
 		clientId = this.getIntent().getStringExtra("teminalCode");
 		type = this.getIntent().getStringExtra("type");
 
@@ -93,12 +94,15 @@ public class Frm_ReportMenu extends Activity implements OnClickListener {
 		exit = (Button) findViewById(R.id.back);
 		exit.setOnClickListener(this);
 
-		title = (TextView) findViewById(R.id.title);
-		title.setText(this.getIntent().getStringExtra("name"));
-
 		initTemGroupList();
 		initPage();
-
+	}
+	
+	private void initTitle(){
+		name = this.getIntent().getStringExtra("name");
+		
+		title = (TextView) findViewById(R.id.title);
+		title.setText(name);
 	}
 
 	private void initPage() {
@@ -114,7 +118,11 @@ public class Frm_ReportMenu extends Activity implements OnClickListener {
 	}
 
 	private void initTemGroupList() {
-		temGroupList = TemplateFactory.getTemplateGroupList(context);
+		if("纸品".equals(name)){
+			temGroupList = TemplateFactory.getPaperProductsTemplateGroupList(context);
+		}else{
+			temGroupList = TemplateFactory.getWeiPinTemplateGroupList(context);
+		}
 	}
 
 	private LinearLayout getMainLine() {
@@ -229,14 +237,24 @@ public class Frm_ReportMenu extends Activity implements OnClickListener {
 		if (v instanceof CTextView) {
 			selectTView = (CTextView) v;
 
-			if ("3".equals(selectTView.getTemplateType()) || "5".equals(selectTView.getTemplateType())) { // 促销活动报告,试用装检查报告
-				chooseTrainingTheme(context, "200", selectTView.getTemplateName());
+			if ("3".equals(selectTView.getTemplateType()) || "13".equals(selectTView.getTemplateType())) { // 促销活动报告,试用装检查报告
+				Intent i = new Intent(getContext(), Frm_SalesPromotion.class);
+				i.putExtra("type", selectTView.getTemplateType());
+				i.putExtra("name", selectTView.getTemplateName());
+				i.putExtra("teminalCode", getIntent().getStringExtra("teminalCode"));
+				i.putExtra("clienttype", getIntent().getStringExtra("clienttype"));
+				i.putExtra("displaytype", getIntent().getStringExtra("displaytype"));
+				i.putExtra("terminalname", getIntent().getStringExtra("terminalname"));
+				i.putExtra("itemID", "");
+
+				activity.startActivityForResult(i, 1000);
 			} else {
 				toRptClass("");
 			}
 		}
 	}
 
+	@SuppressWarnings("unused")
 	private void changeRptStatus() {
 		selectTView.changeStatus();
 		if (selectTView.isComplete()) {
@@ -336,6 +354,7 @@ public class Frm_ReportMenu extends Activity implements OnClickListener {
 		Sqlite.saveReport(context, report);
 	}
 
+	@SuppressWarnings("unused")
 	private SObject getRpt(PhotoType type) {
 		Template template;
 		if (type == PhotoType.CHECKIN)

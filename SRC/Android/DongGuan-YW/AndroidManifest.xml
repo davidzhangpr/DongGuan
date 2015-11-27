@@ -108,6 +108,12 @@
             android:screenOrientation="portrait" >
         </activity>
         <activity
+            android:name="markettracker.ui.Frm_SalesPromotion"
+            android:configChanges="orientation|keyboardHidden"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
             android:name="markettracker.ui.Frm_ReportMenu"
             android:configChanges="orientation|keyboardHidden"
             android:launchMode="singleTop"

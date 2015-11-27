@@ -443,10 +443,7 @@ public class SyncDataApp extends Application
 			List<UpsertResult> list = (List<UpsertResult>) sObjects;
 			
 			UpsertResult reslut = null;
-			
-			// String msg = "";
 			SObject rpt;
-			// boolean bOK=false;
 			List<String> sqlList = new ArrayList<String>();
 			for (int i = 0; i < sObjectsSub.size(); i++)
 			{
@@ -454,14 +451,18 @@ public class SyncDataApp extends Application
 				reslut = list.get(i);
 				if (reslut.isSuccess() == 1)
 				{
-					sqlList.add("update t_data_callReport set issubmit = 1" + " where " + Constants.TableInfo.TABLE_KEY + " =" + rpt.getField(Constants.TableInfo.TABLE_KEY));
+					//促销活动接收服务器返回的报告id
+					if("3".equals(sObjectsSub.get(0).getSValue("TemplateId")) || "13".equals(sObjectsSub.get(0).getSValue("TemplateId"))){
+						sqlList.add("update t_data_callReport set issubmit = 1, serverid = '"+reslut.getRptId()+"'" + " where " + Constants.TableInfo.TABLE_KEY + " =" + rpt.getField(Constants.TableInfo.TABLE_KEY));
+					}else{
+						sqlList.add("update t_data_callReport set issubmit = 1" + " where " + Constants.TableInfo.TABLE_KEY + " =" + rpt.getField(Constants.TableInfo.TABLE_KEY));
+					}
+
 					sqlList.add("update T_Visit_Plan_Detail set str1 ='1'" + " where clientid ='" + rpt.getSValue("ClientId") + "'");
-					// bOK = true;
 				}
 				else if (reslut.isSuccess() == -1)
 				{
-					sqlList.add("update t_data_callReport set issubmit = 2, errmsg='" + reslut.getErrorMsg() + "'" + " where " + Constants.TableInfo.TABLE_KEY + " =" + rpt.getField(Constants.TableInfo.TABLE_KEY));
-					// bOK = false;
+					sqlList.add("update t_data_callReport set issubmit = 0, errmsg='" + reslut.getErrorMsg() + "'" + " where " + Constants.TableInfo.TABLE_KEY + " =" + rpt.getField(Constants.TableInfo.TABLE_KEY));
 				}
 			}
 			if (sqlList.size() > 0)

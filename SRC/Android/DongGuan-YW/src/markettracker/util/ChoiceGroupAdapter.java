@@ -90,10 +90,7 @@ public class ChoiceGroupAdapter extends ArrayAdapter<String> {
 
 	private List<DicData> getDictData(Context context) {
 		if (list == null) {
-			if (this.item.getItemType() == 1)
-				list = Sqlite.getAnswerList(context, item.getDicId());
-			else
-				list = Sqlite.getDictDataList(context, item.getDicId(), "");
+			list = Sqlite.getDictDataList(context, item.getDicId(), "");
 		}
 		return list;
 	}

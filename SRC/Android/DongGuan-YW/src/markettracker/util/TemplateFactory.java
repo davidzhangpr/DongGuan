@@ -53,43 +53,42 @@ public class TemplateFactory {
 		return t;
 	}
 
+	/**
+	 * 事件拜访模版
+	 * @return
+	 */
 	public static TemGroupList getTASKTemplateGroupList() {
 		TemGroupList list = new TemGroupList();
+		
 		TemplateGroup group = new TemplateGroup();
-		group.setName("事件拜访报告");
+		group.setName("事件");
 		group.setShowTitle(false);
+		
 		Template t = new Template();
 		t.setType("20");
 		t.setOnlyType(20);
-		t.setName("事件拜访报告");
+		t.setName("事件");
+		
 		group.setTemplate(t);
+		
 		list.setTempGroup(group);
 
 		return list;
 	}
 
+	@SuppressWarnings("unused")
 	private static void addTemplate(Context context, TemplateGroup group, String dictId, int type) {
 		List<DicData> dictList = Sqlite.getDictDataList(context, dictId, "");
-
-		if (type == 9) { // BA检查报告
-			groupSize = dictList.size();
-		}
 
 		int tempType;
 		Template t = null;
 		for (DicData dic : dictList) {
-			if (type == 10) {
-				tempType = type * 10000 + Integer.parseInt(dic.getValue());
-			} else {
-				tempType = type * 1000 + Integer.parseInt(dic.getValue());
-			}
+			tempType = type * 1000 + Integer.parseInt(dic.getValue());
 
 			t = new Template();
 			t.setType(tempType + "");
 			t.setOnlyType(tempType);
 			t.setName(dic.getItemname());
-			// if (type == 1 || type == 6)
-			// t.setMutiInput(true);
 			group.setTemplate(t);
 		}
 	}
@@ -200,123 +199,140 @@ public class TemplateFactory {
 			t.setPanal(panal);
 		}
 	}
-
-	public static TemGroupList getBrandTemplateGroupList(Context context) {
+	
+	/**
+	 * 门店拜访模版
+	 * @param context
+	 * @return
+	 */
+	public static TemGroupList getTemplateGroupList(Context context) {
 		TemGroupList list = new TemGroupList();
 
 		TemplateGroup group = new TemplateGroup();
-		group.setShowTitle(true);
-		group.setName("生意表现");
+		group.setShowTitle(false);
+		group.setName("纸品");
 		Template t = new Template();
-		t.setType("1");
-		t.setOnlyType(1);
-		t.setName("生意表现");
+		t.setType("101");
+		t.setOnlyType(101);
+		t.setName("纸品");
 		group.setTemplate(t);
 		list.setTempGroup(group);
 		
 		group = new TemplateGroup();
-		group.setName("品牌");
-		addTemplate(context, group, "161", 568);
-		list.setTempGroup(group);
-		
-		group = new TemplateGroup();
-		group.setShowTitle(true);
-		group.setName("BA检查报告");
-		addTemplate(context, group, "101115", 9);
-		list.setTempGroup(group);
-		
-		group = new TemplateGroup();
-		group.setShowTitle(true);
-		group.setName("竞品报告");
-		addTemplate(context, group, "-100", 10);
-		list.setTempGroup(group);
-		
-		group = new TemplateGroup();
-		group.setShowTitle(true);
-		group.setName("拜访总结");
+		group.setShowTitle(false);
+		group.setName("卫品");
 		t = new Template();
-		t.setType("11");
-		t.setOnlyType(11);
-		t.setName("拜访总结");
+		t.setType("102");
+		t.setOnlyType(102);
+		t.setName("卫品");
 		group.setTemplate(t);
 		list.setTempGroup(group);
 
 		return list;
 	}
 
-	public static TemGroupList getTemplateGroupList(Context context) {
+	/**
+	 * 经销商拜访模版
+	 * @param context
+	 * @return
+	 */
+	public static TemGroupList getDealersTemplateGroupList(Context context) {
+		TemGroupList list = new TemGroupList();
+		
+		TemplateGroup group = new TemplateGroup();
+		group.setShowTitle(false);
+		group.setName("拜访目的");
+		Template t = new Template();
+		t.setType("21");
+		t.setOnlyType(21);
+		t.setName("拜访目的");
+		group.setTemplate(t);
+		list.setTempGroup(group);
+		
+		group = new TemplateGroup();
+		group.setShowTitle(false);
+		group.setName("库存检查");
+		t = new Template();
+		t.setType("22");
+		t.setOnlyType(22);
+		t.setName("库存检查");
+		group.setTemplate(t);
+		list.setTempGroup(group);
+		
+		return list;
+	}
+
+	/**
+	 * 纸品报告模版组
+	 * @param context
+	 * @return
+	 */
+	public static TemGroupList getPaperProductsTemplateGroupList(Context context) {
 		TemGroupList list = new TemGroupList();
 
 		TemplateGroup group = new TemplateGroup();
 		group.setShowTitle(true);
-		group.setName("柜台检查报告");
+		group.setName("陈列检查");
+		addTemplate(context, group, "210", 1);
+		list.setTempGroup(group);
+
+		group = new TemplateGroup();
+		group.setShowTitle(true);
+		group.setName("分销管理");
 		Template t = new Template();
 		t.setType("2");
 		t.setOnlyType(2);
-		t.setName("柜台检查报告");
+		t.setName("分销管理");
 		group.setTemplate(t);
 		list.setTempGroup(group);
 
 		group = new TemplateGroup();
 		group.setShowTitle(true);
-		group.setName("促销活动报告");
+		group.setName("促销活动");
 		t = new Template();
 		t.setType("3");
 		t.setOnlyType(3);
-		t.setName("促销活动报告");
+		t.setName("促销活动");
 		group.setTemplate(t);
 		list.setTempGroup(group);
 
+		return list;
+	}
+
+	/**
+	 * 卫品报告模版组
+	 * @param context
+	 * @return
+	 */
+	public static TemGroupList getWeiPinTemplateGroupList(Context context) {
+		TemGroupList list = new TemGroupList();
+		
+		TemplateGroup group = new TemplateGroup();
+		group.setShowTitle(true);
+		group.setName("陈列检查");
+		addTemplate(context, group, "215", 11);
+		list.setTempGroup(group);
+		
 		group = new TemplateGroup();
 		group.setShowTitle(true);
-		group.setName("价格检查报告");
-		t = new Template();
-		t.setType("4");
-		t.setOnlyType(4);
-		t.setName("价格检查报告");
+		group.setName("分销管理");
+		Template t = new Template();
+		t.setType("12");
+		t.setOnlyType(12);
+		t.setName("分销管理");
 		group.setTemplate(t);
 		list.setTempGroup(group);
-
+		
 		group = new TemplateGroup();
 		group.setShowTitle(true);
-		group.setName("试用装检查报告");
+		group.setName("促销活动");
 		t = new Template();
-		t.setType("5");
-		t.setOnlyType(5);
-		t.setName("试用装检查报告");
+		t.setType("13");
+		t.setOnlyType(13);
+		t.setName("促销活动");
 		group.setTemplate(t);
 		list.setTempGroup(group);
-
-		group = new TemplateGroup();
-		group.setShowTitle(true);
-		group.setName("赠品管理报告");
-		t = new Template();
-		t.setType("6");
-		t.setOnlyType(6);
-		t.setName("赠品管理报告");
-		group.setTemplate(t);
-		list.setTempGroup(group);
-
-		group = new TemplateGroup();
-		group.setShowTitle(true);
-		group.setName("库存报告");
-		t = new Template();
-		t.setType("7");
-		t.setOnlyType(7);
-		t.setName("库存报告");
-		group.setTemplate(t);
-		list.setTempGroup(group);
-
-		group = new TemplateGroup();
-		group.setShowTitle(true);
-		group.setName("品牌总结");
-		t = new Template();
-		t.setType("8");
-		t.setOnlyType(8);
-		t.setName("品牌总结");
-		group.setTemplate(t);
-		list.setTempGroup(group);
-
+		
 		return list;
 	}
 	
@@ -460,12 +476,13 @@ public class TemplateFactory {
 		t.setType("20");
 		t.setName("事件");
 		t.setOnlyType(20);
-		// t.setPhoto(true);
+		
 		Panal panal = new Panal();
-		panal.setCaption("拜访总结");
+		panal.setCaption("事件");
 		panal.setType(Constants.PanalType.PANEL);
+
 		UIItem item = new UIItem();
-		item.setCaption("拜访总结");
+		item.setCaption("事件描述");
 		item.setShowLable(false);
 		item.setControlType(ControlType.TEXT);
 		item.setTitleWidth(getCallPlanTitleWidth());
@@ -474,6 +491,16 @@ public class TemplateFactory {
 		item.setGravity(Gravity.CENTER_VERTICAL | Gravity.RIGHT);
 		item.setDataKey("str1");
 		item.setOrientation(LinearLayout.HORIZONTAL);
+		panal.setItem(item);
+		
+		item = new UIItem();
+		item.setCaption("事件拍照");
+		item.setControlType(ControlType.TAKEPHOTO);
+		item.setTitleWidth(getCallPlanTitleWidth());
+		item.setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
+		item.setVerifytype("number");
+		item.setMaxValue(999);
+		item.setOrientation(LinearLayout.VERTICAL);
 		panal.setItem(item);
 
 		t.setPanal(panal);
@@ -638,134 +665,24 @@ public class TemplateFactory {
 	}
 
 	/**
-	 * 店铺基本情况
-	 * 
+	 * 陈列检查
+	 * @param type
+	 * @param onlyType
 	 * @return
 	 */
-	private static Template getDPJBQKTemplate() {
+	private static Template getDisplayCheckTemplate(String type, int onlyType) {
 		Template t = new Template();
-		t.setType("1");
-		t.setName("店铺基本情况");
-		t.setOnlyType(1);
+		t.setType(type);
+		t.setName("陈列检查");
+		t.setOnlyType(onlyType);
 
 		Panal panal = new Panal();
-		panal.setCaption("店铺基本情况");
+		panal.setCaption("陈列检查");
 		panal.setShowCaption(false);
 		panal.setType(Constants.PanalType.PANEL);
-
+		
 		UIItem item = new UIItem();
-		item.setCaption("本品在店内销售排名");
-		item.setControlType(ControlType.SINGLECHOICE);
-		item.setTitleWidth(getCallPlanTitleWidth());
-		item.setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
-		item.setDataKey("int3");
-		item.setDicId("102");
-		item.setOrientation(LinearLayout.VERTICAL);
-		panal.setItem(item);
-
-		item = new UIItem();
-		item.setCaption("柜台版本");
-		item.setControlType(ControlType.SINGLECHOICE);
-		item.setVerifytype("number");
-		item.setTitleWidth(getCallPlanTitleWidth());
-		item.setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
-		item.setDataKey("int4");
-		item.setDicId("103");
-		item.setOrientation(LinearLayout.VERTICAL);
-		panal.setItem(item);
-
-		item = new UIItem();
-		item.setCaption("柜台位置");
-		item.setControlType(ControlType.SINGLECHOICE);
-		item.setVerifytype("number");
-		item.setTitleWidth(getCallPlanTitleWidth());
-		item.setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
-		item.setDataKey("int5");
-		item.setDicId("104");
-		item.setOrientation(LinearLayout.VERTICAL);
-		panal.setItem(item);
-
-		item = new UIItem();
-		item.setCaption("位置描述");
-		item.setControlType(ControlType.TEXT);
-		item.setVerifytype("text");
-		item.setTitleWidth(getCallPlanTitleWidth());
-		item.setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
-		item.setDataKey("str1");
-		item.setOrientation(LinearLayout.VERTICAL);
-		panal.setItem(item);
-
-		item = new UIItem();
-		item.setCaption("专柜拍照");
-		item.setControlType(ControlType.TAKEPHOTO);
-		item.setTitleWidth(getCallPlanTitleWidth());
-		item.setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
-		item.setVerifytype("number");
-		// item.setDataKey("int4");
-		item.setMaxValue(999);
-		item.setOrientation(LinearLayout.VERTICAL);
-		panal.setItem(item);
-
-		t.setPanal(panal);
-
-		// ButtonConfig button = new ButtonConfig();
-		// button.setId(1);
-		// button.setName("基本信息");
-		// t.setButton(button);
-		//
-		// button = new ButtonConfig();
-		// button.setId(3);
-		// button.setName("拍照");
-		// t.setButton(button);
-
-		return t;
-	}
-
-	/**
-	 * 柜台检查报告
-	 * 
-	 * @return
-	 */
-	private static Template getGTJCTemplate(Context context) {
-		Template t = new Template();
-		t.setType("2");
-		t.setName("柜台检查报告");
-		t.setOnlyType(2);
-
-		Panal panal = new Panal();
-		panal.setCaption("柜台检查报告");
-		panal.setShowCaption(false);
-		panal.setType(Constants.PanalType.PANEL);
-
-		UIItem item = new UIItem();
-		item.setCaption("本店销售竞品品牌");
-		item.setControlType(ControlType.SINGLECHOICE);
-		item.setVerifytype("number");
-		item.setTitleWidth(getCallPlanTitleWidth());
-		item.setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
-		item.setDataKey("int3");
-		item.setDicId("162");
-		item.setOrientation(LinearLayout.VERTICAL);
-		panal.setItem(item);
-		
-		t.setPanal(panal);
-		
-		panal = new Panal();
-		panal.setCaption("柜台检查报告");
-		panal.setShowCaption(false);
-		panal.setType(Constants.PanalType.PANELDETAIL);
-		
-		addUIItem(context, panal, "165", "40");
-		
-		t.setPanal(panal);
-		
-		panal = new Panal();
-		panal.setCaption("拍照");
-		panal.setShowCaption(false);
-		panal.setType(Constants.PanalType.PANEL);
-		
-		item = new UIItem();
-		item.setCaption("柜台检查");
+		item.setCaption("陈列照片");
 		item.setControlType(ControlType.TAKEPHOTO);
 		item.setTitleWidth(getCallPlanTitleWidth());
 		item.setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
@@ -773,135 +690,117 @@ public class TemplateFactory {
 		item.setMaxValue(999);
 		item.setOrientation(LinearLayout.VERTICAL);
 		panal.setItem(item);
-
+		
 		t.setPanal(panal);
-
+		
 		return t;
 	}
 
 	/**
-	 * BA检查报告
-	 * 
+	 * 分销管理
 	 * @param type
 	 * @return
 	 */
-	private static Template getBAJCTemplate(int type) {
+	private static Template getDistributionManagementTemplate(int type) {
 		Template t = new Template();
-		t.setType("9");
-		t.setName("BA检查报告");
+		t.setType(type+"");
+		t.setName("分销管理");
 		t.setOnlyType(type);
 
 		Panal panal = new Panal();
-		panal.setCaption("BA检查报告");
-		panal.setShowCaption(false);
-		panal.setType(Constants.PanalType.PANEL);
-
-		UIItem item = new UIItem();
-		item.setCaption("BA姓名");
-
-		if (type == (9 * 1000 + groupSize)) {
-			item.setControlType(ControlType.TEXT);
-			item.setMustInput(true);
-		} else {
-			item.setControlType(ControlType.NONE);
-		}
-
-		item.setVerifytype("text");
-		item.setTitleWidth(getCallPlanTitleWidth());
-		item.setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
-		item.setDataKey("str1");
-		item.setOrientation(LinearLayout.VERTICAL);
-		panal.setItem(item);
-
-		t.setPanal(panal);
-
-		panal = new Panal();
-		panal.setCaption("BA检查报告");
+		panal.setCaption("分销管理");
 		panal.setShowCaption(false);
 		panal.setType(Constants.PanalType.PRODUCTTABLE);
 
+		UIItem item = new UIItem();
+		item.setCaption("品类");
+		item.setControlType(ControlType.NONE);
+		item.setWidth(Tool.getScreenWidth() / 5);
+		item.setAlign(Align.CENTER);
+		item.setDataKey("levelname");
+		panal.setItem(item);
+
 		item = new UIItem();
-		item.setCaption("评价角度");
+		item.setCaption("产品名称");
 		item.setControlType(ControlType.NONE);
 		item.setWidth(Tool.getScreenWidth() / 2);
 		item.setAlign(Align.LEFT);
-		item.setDicId("121");
 		item.setDataKey("productname");
 		panal.setItem(item);
 
 		item = new UIItem();
-		item.setCaption("得分");
-		item.setControlType(ControlType.TEXT);
-		item.setVerifytype("number");
-		item.setWidth(Tool.getScreenWidth() / 2);
+		item.setCaption("是否上架");
+		item.setControlType(ControlType.SELECTED);
+		item.setWidth((Tool.getScreenWidth() - Tool.getScreenWidth() / 5 - Tool.getScreenWidth() / 2) / 2);
 		item.setAlign(Align.CENTER);
 		item.setDataKey("int1");
 		panal.setItem(item);
 
+		item = new UIItem();
+		item.setCaption("是否缺货");
+		item.setControlType(ControlType.SELECTED);
+		item.setWidth((Tool.getScreenWidth() - Tool.getScreenWidth() / 5 - Tool.getScreenWidth() / 2) / 2);
+		item.setAlign(Align.CENTER);
+		item.setDataKey("int2");
+		panal.setItem(item);
+
 		t.setPanal(panal);
-
-		ButtonConfig button = new ButtonConfig();
-		button.setId(1);
-		button.setName("基本信息");
-		t.setButton(button);
-
-		button = new ButtonConfig();
-		button.setId(2);
-		button.setName("BA检查");
-		t.setButton(button);
 
 		return t;
 	}
-
+	
 	/**
-	 * 促销活动报告
-	 * 
+	 * 促销活动-新增
+	 * @param type
 	 * @return
 	 */
-	private static Template getCXHDTemplate() {
+	private static Template getSalesPromotionTemplate(int type) {
 		Template t = new Template();
-		t.setType("3");
-		t.setName("促销活动报告");
-		t.setOnlyType(3);
+		t.setType(type+"");
+		t.setName("促销活动");
+		t.setOnlyType(type);
 
 		Panal panal = new Panal();
-		panal.setCaption("促销活动报告");
+		panal.setCaption("促销活动");
 		panal.setShowCaption(false);
 		panal.setType(Constants.PanalType.PANEL);
 
 		UIItem item = new UIItem();
 
 		item = new UIItem();
-		item.setCaption("促销活动主题");
+		item.setCaption("OA单号");
 		item.setControlType(ControlType.TEXT);
 		item.setVerifytype("text");
 		item.setTitleWidth(getCallPlanTitleWidth());
 		item.setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
 		item.setDataKey("str1");
+		item.setMustInput(true);
 		item.setOrientation(LinearLayout.VERTICAL);
 		panal.setItem(item);
 
 		item = new UIItem();
-		item.setCaption("促销活动形式");
+		item.setCaption("促销方式");
 		item.setControlType(ControlType.SINGLECHOICE);
 		item.setVerifytype("number");
+		item.setMustInput(true);
 		item.setTitleWidth(getCallPlanTitleWidth());
 		item.setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
-		item.setDataKey("int4");
-		item.setDicId("163");
+		item.setDataKey("int2");
+		
+		if(type == 3){	//纸品
+			item.setDicId("211");
+		}else{	//卫品
+			item.setDicId("216");
+		}
+		
 		item.setOrientation(LinearLayout.VERTICAL);
 		panal.setItem(item);
 
-		t.setPanal(panal);
-
-		panal = new Panal();
-		panal.setCaption("促销活动时间段");
-		panal.setType(Constants.PanalType.PANEL);
-
 		item = new UIItem();
-		item.setCaption("开始");
+		item.setCaption("活动开始时间");
 		item.setControlType(ControlType.DATE);
 		item.setVerifytype("text");
+		item.setMustInput(true);
 		item.setTitleWidth(getCallPlanTitleWidth());
 		item.setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
 		item.setDataKey("str2");
@@ -909,9 +808,10 @@ public class TemplateFactory {
 		panal.setItem(item);
 
 		item = new UIItem();
-		item.setCaption("结束");
+		item.setCaption("活动结束时间");
 		item.setControlType(ControlType.DATE);
 		item.setVerifytype("text");
+		item.setMustInput(true);
 		item.setTitleWidth(getCallPlanTitleWidth());
 		item.setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
 		item.setDataKey("str3");
@@ -920,72 +820,122 @@ public class TemplateFactory {
 
 		t.setPanal(panal);
 
-		panal = new Panal();
-		panal.setCaption("促销物料");
-		panal.setType(Constants.PanalType.PANEL);
+		return t;
+	}
 
+	/**
+	 * 促销活动-反馈
+	 * @param type
+	 * @return
+	 */
+	private static Template getSalesPromotionFeedbackTemplate(int type) {
+		Template t = new Template();
+		t.setType(type+"");
+		t.setName("促销活动反馈");
+		t.setOnlyType(type);
+		
+		Panal panal = new Panal();
+		panal.setCaption("促销活动反馈");
+		panal.setShowCaption(false);
+		panal.setType(Constants.PanalType.PANEL);
+		
+		UIItem item = new UIItem();
+		
 		item = new UIItem();
-		item.setCaption("促销物料");
-		item.setControlType(ControlType.SINGLECHOICE);
-		item.setVerifytype("number");
+		item.setCaption("OA单号");
+		item.setControlType(ControlType.NONE);
+		item.setVerifytype("text");
 		item.setTitleWidth(getCallPlanTitleWidth());
 		item.setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
-		item.setDataKey("int5");
-		item.setDicId("164");
+		item.setDataKey("str4");
+		item.setOrientation(LinearLayout.VERTICAL);
+		panal.setItem(item);
+		
+		item = new UIItem();
+		item.setCaption("促销方式");
+		item.setControlType(ControlType.NONE);
+		item.setVerifytype("text");
+		item.setTitleWidth(getCallPlanTitleWidth());
+		item.setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
+		item.setDataKey("str5");
+		item.setOrientation(LinearLayout.VERTICAL);
+		panal.setItem(item);
+		
+		item = new UIItem();
+		item.setCaption("活动开始时间");
+		item.setControlType(ControlType.NONE);
+		item.setVerifytype("text");
+		item.setTitleWidth(getCallPlanTitleWidth());
+		item.setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
+		item.setDataKey("str2");
+		item.setOrientation(LinearLayout.VERTICAL);
+		panal.setItem(item);
+		
+		item = new UIItem();
+		item.setCaption("活动结束时间");
+		item.setControlType(ControlType.NONE);
+		item.setVerifytype("text");
+		item.setTitleWidth(getCallPlanTitleWidth());
+		item.setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
+		item.setDataKey("str3");
 		item.setOrientation(LinearLayout.VERTICAL);
 		panal.setItem(item);
 
-		t.setPanal(panal);
-		
-		panal = new Panal();
-		panal.setCaption("拍照");
-		panal.setType(Constants.PanalType.PANEL);
+		item = new UIItem();
+		item.setCaption("实际陈列反馈");
+		item.setControlType(ControlType.TEXT);
+		item.setVerifytype("text");
+		item.setTitleWidth(getCallPlanTitleWidth());
+		item.setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
+		item.setDataKey("str1");
+		item.setOrientation(LinearLayout.VERTICAL);
+		panal.setItem(item);
 		
 		item = new UIItem();
-		item.setCaption("促销活动");
+		item.setCaption("促销反馈拍照");
 		item.setControlType(ControlType.TAKEPHOTO);
 		item.setTitleWidth(getCallPlanTitleWidth());
 		item.setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
-		item.setVerifytype("number");
-		item.setMaxValue(999);
 		item.setOrientation(LinearLayout.VERTICAL);
 		panal.setItem(item);
 		
 		t.setPanal(panal);
-
+		
 		return t;
 	}
 
 	/**
-	 * 赠品管理报告
-	 * 
+	 *	拜访目的 
 	 * @return
 	 */
-	private static Template getZPGLTemplate() {
+	private static Template getPurposeOfVisitTemplate() {
 		Template t = new Template();
-		t.setType("6");
-		t.setName("赠品管理报告");
-		t.setOnlyType(6);
+		t.setType("21");
+		t.setName("拜访目的");
+		t.setOnlyType(21);
 
 		Panal panal = new Panal();
-		panal.setCaption("赠品管理报告");
-		panal.setType(Constants.PanalType.PRODUCTTABLE);
+		panal.setCaption("拜访目的");
+		panal.setShowCaption(false);
+		panal.setType(Constants.PanalType.PANEL);
 
 		UIItem item = new UIItem();
-		item.setCaption("赠品");
-		item.setControlType(ControlType.NONE);
-		item.setWidth(Tool.getScreenWidth() / 2);
-		item.setAlign(Align.CENTER);
-		item.setDataKey("productname");
+		item.setCaption("拜访目的");
+		item.setControlType(ControlType.SINGLECHOICE);
+		item.setTitleWidth(getCallPlanTitleWidth());
+		item.setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
+		item.setDataKey("int1");
+		item.setDicId("217");
+		item.setOrientation(LinearLayout.VERTICAL);
 		panal.setItem(item);
 
 		item = new UIItem();
-		item.setCaption("库存量");
+		item.setCaption("备注");
 		item.setControlType(ControlType.TEXT);
-		item.setWidth(Tool.getScreenWidth() / 2);
-		item.setVerifytype("number");
-		item.setDataKey("int1");
-		item.setOrientation(LinearLayout.HORIZONTAL);
+		item.setTitleWidth(getCallPlanTitleWidth());
+		item.setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
+		item.setDataKey("str1");
+		item.setOrientation(LinearLayout.VERTICAL);
 		panal.setItem(item);
 
 		t.setPanal(panal);
@@ -994,80 +944,41 @@ public class TemplateFactory {
 	}
 
 	/**
-	 * 试用装检查报告
-	 * 
+	 * 库存检查
 	 * @return
 	 */
-	private static Template getSYZJCTemplate() {
+	private static Template getInventoryCheckTemplate() {
 		Template t = new Template();
-		t.setType("5");
-		t.setName("试用装检查报告");
-		t.setOnlyType(5);
+		t.setType("22");
+		t.setName("库存检查");
+		t.setOnlyType(22);
 
 		Panal panal = new Panal();
-		panal.setCaption("试用装检查报告");
+		panal.setCaption("库存检查");
 		panal.setType(Constants.PanalType.PRODUCTTABLE);
 
 		UIItem item = new UIItem();
-		item.setCaption("试用装名称");
+		item.setCaption("品类");
 		item.setControlType(ControlType.NONE);
-		item.setWidth(Tool.getScreenWidth() / 2);
+		item.setWidth(Tool.getScreenWidth() / 4);
 		item.setAlign(Align.CENTER);
-		item.setDataKey("productname");
+		item.setDataKey("levelname");
 		panal.setItem(item);
 
 		item = new UIItem();
-		item.setCaption("缺货");
-		item.setControlType(ControlType.SELECTED);
-		item.setWidth(Tool.getScreenWidth() / 2);
-		item.setVerifytype("number");
-		item.setDataKey("int1");
-		item.setOrientation(LinearLayout.HORIZONTAL);
-		panal.setItem(item);
-
-		t.setPanal(panal);
-
-		return t;
-	}
-
-	/**
-	 * 库存报告
-	 * 
-	 * @return
-	 */
-	private static Template getKCTemplate() {
-		Template t = new Template();
-		t.setType("7");
-		t.setName("库存报告");
-		t.setOnlyType(7);
-
-		Panal panal = new Panal();
-		panal.setCaption("库存报告");
-		panal.setType(Constants.PanalType.PRODUCTTABLE);
-
-		UIItem item = new UIItem();
-		item.setCaption("重点产品名称");
+		item.setCaption("产品名称");
 		item.setControlType(ControlType.NONE);
-		item.setWidth(Tool.getScreenWidth() / 3);
+		item.setWidth(Tool.getScreenWidth() / 2);
 		item.setAlign(Align.LEFT);
 		item.setDataKey("productname");
 		panal.setItem(item);
 
 		item = new UIItem();
-		item.setCaption("库存量");
+		item.setCaption("库存数");
 		item.setControlType(ControlType.TEXT);
-		item.setWidth(Tool.getScreenWidth() / 3);
+		item.setWidth(Tool.getScreenWidth() / 4);
 		item.setVerifytype("number");
 		item.setDataKey("int1");
-		item.setOrientation(LinearLayout.HORIZONTAL);
-		panal.setItem(item);
-
-		item = new UIItem();
-		item.setCaption("建议订货数");
-		item.setControlType(ControlType.TEXT);
-		item.setWidth(Tool.getScreenWidth() / 3);
-		item.setVerifytype("number");
-		item.setDataKey("int2");
 		item.setOrientation(LinearLayout.HORIZONTAL);
 		panal.setItem(item);
 
@@ -1121,211 +1032,6 @@ public class TemplateFactory {
 		return t;
 	}
 
-	/**
-	 * 竞品报告
-	 * 
-	 * @return
-	 */
-	private static Template getJPTemplate(int type) {
-		Template t = new Template();
-		t.setType("10");
-		t.setName("竞品报告");
-		t.setOnlyType(type);
-
-		Panal panal = new Panal();
-		panal.setCaption("竞品报告");
-		panal.setType(Constants.PanalType.PANEL);
-
-		UIItem item = new UIItem();
-		item.setCaption("上月销量");
-		item.setControlType(ControlType.TEXT);
-		item.setVerifytype("number");
-		item.setTitleWidth(getCallPlanTitleWidth());
-		item.setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
-		item.setDataKey("int3");
-		item.setOrientation(LinearLayout.VERTICAL);
-		panal.setItem(item);
-
-		item = new UIItem();
-		item.setCaption("进货扣率");
-		item.setControlType(ControlType.TEXT);
-		item.setVerifytype("number");
-		item.setTitleWidth(getCallPlanTitleWidth());
-		item.setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
-		item.setDataKey("int4");
-		item.setOrientation(LinearLayout.VERTICAL);
-		panal.setItem(item);
-
-		item = new UIItem();
-		item.setCaption("上市新品");
-		item.setControlType(ControlType.TEXT);
-		item.setVerifytype("text");
-		item.setTitleWidth(getCallPlanTitleWidth());
-		item.setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
-		item.setDataKey("str1");
-		item.setOrientation(LinearLayout.VERTICAL);
-		panal.setItem(item);
-
-		item = new UIItem();
-		item.setCaption("促销活动");
-		item.setControlType(ControlType.SINGLECHOICE);
-		item.setVerifytype("number");
-		item.setTitleWidth(getCallPlanTitleWidth());
-		item.setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
-		item.setDataKey("int5");
-		item.setDicId("163");
-		item.setOrientation(LinearLayout.VERTICAL);
-		panal.setItem(item);
-	
-		item = new UIItem();
-		item.setCaption("补充说明");
-		item.setControlType(ControlType.TEXT);
-		item.setVerifytype("text");
-		item.setTitleWidth(getCallPlanTitleWidth());
-		item.setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
-		item.setDataKey("str2");
-		item.setOrientation(LinearLayout.VERTICAL);
-		panal.setItem(item);
-
-		t.setPanal(panal);
-
-		return t;
-	}
-	
-	/**
-	 * 品牌总结
-	 * @return
-	 */
-	private static Template getPPZJTemplate() {
-		Template t = new Template();
-		t.setType("8");
-		t.setName("品牌总结");
-		t.setOnlyType(8);
-
-		Panal panal = new Panal();
-		panal.setCaption("品牌总结");
-		panal.setShowCaption(false);
-		panal.setType(Constants.PanalType.PANEL);
-
-		UIItem item = new UIItem();
-		item.setCaption("本品牌问题及待处理事项");
-		item.setControlType(ControlType.TEXT);
-		item.setVerifytype("text");
-		item.setTitleWidth(getCallPlanTitleWidth());
-		item.setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
-		item.setDataKey("str1");
-		item.setOrientation(LinearLayout.VERTICAL);
-		panal.setItem(item);
-		
-		t.setPanal(panal);
-
-		return t;
-	}
-	
-	/**
-	 * 拜访总结
-	 * @return
-	 */
-	private static Template getBFZJTemplate() {
-		Template t = new Template();
-		t.setType("11");
-		t.setName("拜访总结");
-		t.setOnlyType(11);
-		
-		Panal panal = new Panal();
-		panal.setCaption("拜访总结");
-		panal.setShowCaption(false);
-		panal.setType(Constants.PanalType.PANEL);
-		
-		UIItem item = new UIItem();
-		item.setCaption("本次拜访目的");
-		item.setControlType(ControlType.SINGLECHOICE);
-		item.setVerifytype("number");
-		item.setTitleWidth(getCallPlanTitleWidth());
-		item.setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
-		item.setDataKey("int3");
-		item.setDicId("168");
-		item.setOrientation(LinearLayout.VERTICAL);
-		panal.setItem(item);
-		
-		item = new UIItem();
-		item.setCaption("拜访达成总结");
-		item.setControlType(ControlType.TEXT);
-		item.setVerifytype("text");
-		item.setTitleWidth(getCallPlanTitleWidth());
-		item.setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
-		item.setDataKey("str1");
-		item.setOrientation(LinearLayout.VERTICAL);
-		panal.setItem(item);
-		
-		t.setPanal(panal);
-		
-		return t;
-	}
-
-	/**
-	 * 销售日报
-	 * @return
-	 */
-	private static Template getXSRBTemplate(int type) {
-		Template t = new Template();
-		t.setType("12");
-		t.setName("销售日报");
-		t.setOnlyType(type);
-		
-		Panal panal = new Panal();
-		panal.setCaption("销售日期");
-		panal.setType(Constants.PanalType.PANEL);
-		
-		UIItem item = new UIItem();
-		item.setCaption("销售日期");
-		item.setShowLable(false);
-		item.setControlType(ControlType.NONE);
-		item.setVerifytype("text");
-		item.setTitleWidth(getCallPlanTitleWidth());
-		item.setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
-		item.setDataKey("str1");
-		item.setOrientation(LinearLayout.VERTICAL);
-		panal.setItem(item);
-		
-		t.setPanal(panal);
-		
-		panal = new Panal();
-		panal.setCaption("销售日报");
-		panal.setType(Constants.PanalType.PRODUCTTABLE);
-		
-		item = new UIItem();
-		item.setCaption("门店名称");
-		item.setControlType(ControlType.NONE);
-		item.setWidth(Tool.getScreenWidth() / 2);
-		item.setAlign(Align.LEFT);
-		item.setDataKey("fullname");
-		panal.setItem(item);
-		
-		item = new UIItem();
-		item.setCaption("销量");
-		item.setControlType(ControlType.TEXT);
-		item.setWidth(Tool.getScreenWidth() / 2);
-		item.setVerifytype("number");
-		item.setDataKey("int1");
-		item.setOrientation(LinearLayout.HORIZONTAL);
-		panal.setItem(item);
-		
-		t.setPanal(panal);
-		
-		ButtonConfig button = new ButtonConfig();
-		button.setId(1);
-		button.setName("销售日期");
-		t.setButton(button);
-
-		button = new ButtonConfig();
-		button.setId(2);
-		button.setName("销量填写");
-		t.setButton(button);
-		
-		return t;
-	}
-	
 	/**
 	 * 上班模版
 	 * 
@@ -1449,58 +1155,49 @@ public class TemplateFactory {
 	// }
 
 	public static Template getTemplate(Context context, String type) {
-		if ("1".equals(type)) {
-			return getDPJBQKTemplate();
+		if (type.startsWith("10") || type.startsWith("110")) {	//陈列检查
+			if(type.startsWith("10")){	//纸品
+				return getDisplayCheckTemplate("1",Integer.parseInt(type));
+			}else{	//卫品
+				return getDisplayCheckTemplate("11",Integer.parseInt(type));
+			}
 		}
 
-		else if ("2".equals(type)) {
-			return getGTJCTemplate(context);
+		else if ("2".equals(type) || "12".equals(type)) {	//分销管理
+			if("2".equals(type)){	//纸品
+				return getDistributionManagementTemplate(2);
+			}else{	//卫品
+				return getDistributionManagementTemplate(12);
+			}
 		}
 
-		else if ("3".equals(type)) {
-			return getCXHDTemplate();
+		else if ("3".equals(type) || "13".equals(type)) {	//促销活动－新增
+			if("3".equals(type)){	//纸品
+				return getSalesPromotionTemplate(3);
+			}else{	//卫品
+				return getSalesPromotionTemplate(13);
+			}
 		}
 
-		else if ("4".equals(type)) {
-			return getJGJCTemplate();
+		else if ("4".equals(type) || "14".equals(type)) {	//促销活动－反馈
+			if("4".equals(type)){	//纸品
+				return getSalesPromotionFeedbackTemplate(4);
+			}else{	//卫品
+				return getSalesPromotionFeedbackTemplate(14);
+			}
 		}
 
-		else if ("5".equals(type)) {
-			return getSYZJCTemplate();
-		}
-
-		else if ("6".equals(type)) {
-			return getZPGLTemplate();
-		}
-
-		else if ("7".equals(type)) {
-			return getKCTemplate();
-		}
-
-		else if ("8".equals(type)) {
-			return getPPZJTemplate();
-		}
-
-		else if (type.startsWith("9")) {
-			return getBAJCTemplate(Integer.parseInt(type));
-		}
-
-		else if (type.startsWith("10")) {
-			return getJPTemplate(Integer.parseInt(type));
-		}
-
-		else if (type.equals("11")) {
-			return getBFZJTemplate();
-		}
-		
-		else if (type.startsWith("12")) {
-			return getXSRBTemplate(Integer.parseInt(type));
-		}
-
-		else if (type.startsWith("20")) {
+		else if (type.startsWith("20")) {	//事件
 			return getTASKTemplate();
 		}
 
+		else if ("21".equals(type)) {	//拜访目的(经销商)
+			return getPurposeOfVisitTemplate();
+		}
+
+		else if ("22".equals(type)) {	//库存检查(经销商)
+			return getInventoryCheckTemplate();
+		}
 		// else if (type.equals("-3")) {
 		// return getGoToWorkTemplate();
 		// } else if (type.equals("-4")) {

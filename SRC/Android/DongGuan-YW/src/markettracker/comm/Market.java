@@ -4,7 +4,7 @@ import android.content.Context;
 
 public class Market
 {
-	private String serverURL = "http://223.4.23.60:8351/DataWebService.asmx";
+	private String serverURL = "http://223.4.23.60:8413/DataWebService.asmx";
 	Context context;
 	public Market(Context context)
 	{

@@ -96,7 +96,6 @@ public class Frm_SetPlan extends Activity implements OnClickListener
 
 			public void onTextChanged(CharSequence s, int start, int before, int count)
 			{
-				// TODO Auto-generated method stub
 
 			}
 
@@ -220,7 +219,6 @@ public class Frm_SetPlan extends Activity implements OnClickListener
 		item.setControlType(ControlType.SELECTED);
 		item.setDataKey("selected");
 		item.setValidate(1);
-		// item.setOrderby(true);
 		itemList.add(item);
 
 		return itemList;
@@ -232,7 +230,7 @@ public class Frm_SetPlan extends Activity implements OnClickListener
 		switch (v.getId())
 		{
 			case R.id.back:
-				finishActivity();
+				finish(RESULT_CANCELED);
 				break;
 			case R.id.save:
 				savePlan();
@@ -245,15 +243,28 @@ public class Frm_SetPlan extends Activity implements OnClickListener
 
 	private void savePlan()
 	{
+		report.setField("templateid", "-100");
+		report.setField("onlytype", "-100");
+		report.setField("reportdate", selectedDate);
 		report.addDetailfields(customGrid.getDataList());
-		long index = Sqlite.setPlan(context, report);
+		
+		long index = Sqlite.savePlan(context, report);
+		Sqlite.setPlan(context, report);
 		if (index > 0)
 		{
-			Tool.showToastMsg(context, "计划设定成功", AlertType.INFO);
-			finishActivity();
+			finish(RESULT_OK);
 		}
-		else
+		else{
 			Tool.showToastMsg(context, "计划设定失败", AlertType.ERR);
+		}
+	}
+	
+	private void finish(int type)
+	{
+		setResult(type);
+		
+		application.pullActivity(this);
+		this.finish();
 	}
 
 	@Override
@@ -261,7 +272,7 @@ public class Frm_SetPlan extends Activity implements OnClickListener
 	{
 		if (keyCode == KeyEvent.KEYCODE_BACK)
 		{
-			finishActivity();
+			finish(RESULT_CANCELED);
 		}
 		return false;
 	}

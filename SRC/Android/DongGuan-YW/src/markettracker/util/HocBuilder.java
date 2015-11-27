@@ -42,15 +42,14 @@ public class HocBuilder extends Builder {
 				LayoutParams.WRAP_CONTENT);
 		editText = new EditText(context);
 		editText.setHint("至少输入2个字符");
+		editText.setBackgroundResource(R.drawable.input_selector);
 		
-//		editText.setBackgroundColor(context.getResources().getColor(android.R.color.white));
 		layoutParams.bottomMargin=5;
 		editText.setLayoutParams(layoutParams);
 		editText.addTextChangedListener(new TextWatcher() {
 
 			public void onTextChanged(CharSequence s, int start, int before,
 					int count) {
-				// TODO Auto-generated method stub
 				Editable editable = editText.getText();
 				int len = editable.length();
 				if(len>=2)
@@ -68,12 +67,10 @@ public class HocBuilder extends Builder {
 
 			public void beforeTextChanged(CharSequence s, int start, int count,
 					int after) {
-				// TODO Auto-generated method stub
 
 			}
 
 			public void afterTextChanged(Editable s) {
-				// TODO Auto-generated method stub
 
 			}
 		});
@@ -87,7 +84,6 @@ public class HocBuilder extends Builder {
 		LayoutParams layoutParams = new LayoutParams(LayoutParams.FILL_PARENT,
 				LayoutParams.FILL_PARENT);
 		mainLine.setLayoutParams(layoutParams);
-		// mainLine.setPadding(20, 0, 20, 20);
 		mainLine.setBackgroundColor(context.getResources().getColor(
 				R.color.background));
 		mCustomGrid = new CGrid(context);
@@ -101,7 +97,6 @@ public class HocBuilder extends Builder {
 
 		this.setView(mainLine);
 		this.setNegativeButton("取消", new DialogInterface.OnClickListener() {
-			// @Override
 			public void onClick(DialogInterface dialog, int which) {
 
 			}

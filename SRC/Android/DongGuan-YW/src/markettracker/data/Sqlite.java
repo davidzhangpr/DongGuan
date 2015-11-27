@@ -20,7 +20,8 @@ public class Sqlite {
 
 		try {
 			getDB(context).execSqlList(SqlList);
-		} catch (Exception ex) {
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 
@@ -28,7 +29,22 @@ public class Sqlite {
 		long index;
 		try {
 			index = getDB(context).setPlan(rpt);
-		} catch (Exception ex) {
+		} catch (Exception e) {
+			e.printStackTrace();
+			return -1;
+		}
+		return index;
+	}
+	
+	public synchronized static long savePlan(Context context, SObject rpt)
+	{
+		long index;
+		try
+		{
+			index = getDB(context).savePlan(rpt);
+		}
+		catch (Exception ex)
+		{
 			return -1;
 		}
 		return index;
@@ -38,7 +54,8 @@ public class Sqlite {
 		String data;
 		try {
 			data = getDB(context).addDate(date, days);
-		} catch (Exception ex) {
+		} catch (Exception e) {
+			e.printStackTrace();
 			return Tool.getCurrDate();
 		}
 		return data;
@@ -48,17 +65,25 @@ public class Sqlite {
 		FieldsList list;
 		try {
 			list = getDB(context).getReportList(condition);
-		} catch (Exception ex) {
+		} catch (Exception e) {
+			e.printStackTrace();
 			return null;
 		}
 		return list;
 	}
 
-	public synchronized static int getUnReadMsgCount(Context context) {
+	/**
+	 * 查询未下载的信息公告和未读的事项提醒
+	 * @param context
+	 * @param type	2=信息公告 3=事项提醒
+	 * @return
+	 */
+	public synchronized static int getUnReadMsgCount(Context context, int type) {
 		int count = 0;
 		try {
-			count = getDB(context).getUnReadMsgCount();
-		} catch (Exception ex) {
+			count = getDB(context).getUnReadMsgCount(type);
+		} catch (Exception e) {
+			e.printStackTrace();
 			return -1;
 		}
 		return count;
@@ -68,7 +93,8 @@ public class Sqlite {
 		int count = 0;
 		try {
 			count = getDB(context).getUnSubmitRptCount();
-		} catch (Exception ex) {
+		} catch (Exception e) {
+			e.printStackTrace();
 			return -1;
 		}
 		return count;
@@ -78,7 +104,8 @@ public class Sqlite {
 		List<String> list = new ArrayList<String>();
 		try {
 			list = getDB(context).getTemplateIdList(code, key);
-		} catch (Exception ex) {
+		} catch (Exception e) {
+			e.printStackTrace();
 			return null;
 		}
 		return list;
@@ -88,7 +115,8 @@ public class Sqlite {
 		List<Fields> list = new ArrayList<Fields>();
 		try {
 			list = getDB(context).getProductIdList();
-		} catch (Exception ex) {
+		} catch (Exception e) {
+			e.printStackTrace();
 			return null;
 		}
 		return list;
@@ -98,7 +126,8 @@ public class Sqlite {
 		String data;
 		try {
 			data = getDB(context).getDate(where);
-		} catch (Exception ex) {
+		} catch (Exception e) {
+			e.printStackTrace();
 			return Tool.getCurrDate();
 		}
 		return data;
@@ -110,7 +139,8 @@ public class Sqlite {
 				return true;
 			if (getDB(context).upsertData(list, type) < 0)
 				return false;
-		} catch (Exception ex) {
+		} catch (Exception e) {
+			e.printStackTrace();
 			return false;
 		}
 		return true;
@@ -120,7 +150,8 @@ public class Sqlite {
 		FieldsList list = new FieldsList();
 		try {
 			list = getDB(context).getFieldsList(type, code);
-		} catch (Exception ex) {
+		} catch (Exception e) {
+			e.printStackTrace();
 			return null;
 		}
 		return list;
@@ -130,7 +161,8 @@ public class Sqlite {
 		FieldsList list = new FieldsList();
 		try {
 			list = getDB(context).getFieldsList(type, data);
-		} catch (Exception ex) {
+		} catch (Exception e) {
+			e.printStackTrace();
 			return null;
 		}
 		return list;
@@ -140,39 +172,19 @@ public class Sqlite {
 		Template template = new Template();
 		try {
 			template = getDB(context).getTemplate(type);
-		} catch (Exception ex) {
+		} catch (Exception e) {
+			e.printStackTrace();
 			return null;
 		}
 		return template;
 	}
 
-	// public synchronized static TemGroupList getTemplateGroupList(Context
-	// context) {
-	// TemGroupList list = new TemGroupList();
-	// try {
-	// list = getDB(context).getTemplateGroupList();
-	// } catch (Exception ex) {
-	// return null;
-	// }
-	// return list;
-	// }
-	//
-	// public synchronized static Template getTemplate(Context context, String
-	// type) {
-	// Template template = new Template();
-	// try {
-	// template = getDB(context).getTemplate(type);
-	// } catch (Exception ex) {
-	// return null;
-	// }
-	// return template;
-	// }
-
 	public synchronized static SObject getReport(Context context, Template temp, String code, int type, String key) {
 		SObject object;
 		try {
 			object = getDB(context).getReport(temp, code, type, key);
-		} catch (Exception ex) {
+		} catch (Exception e) {
+			e.printStackTrace();
 			return null;
 		}
 		return object;
@@ -182,7 +194,8 @@ public class Sqlite {
 		SObject object;
 		try {
 			object = getDB(context).getDPReport(temp, code);
-		} catch (Exception ex) {
+		} catch (Exception e) {
+			e.printStackTrace();
 			return null;
 		}
 		return object;
@@ -192,7 +205,8 @@ public class Sqlite {
 		SObject object;
 		try {
 			object = getDB(context).getSurveyRpt(temp, code);
-		} catch (Exception ex) {
+		} catch (Exception e) {
+			e.printStackTrace();
 			return null;
 		}
 		return object;
@@ -202,7 +216,8 @@ public class Sqlite {
 		List<SObject> list;
 		try {
 			list = getDB(context).getSubmitObject();
-		} catch (Exception ex) {
+		} catch (Exception e) {
+			e.printStackTrace();
 			return null;
 		}
 		return list;
@@ -212,7 +227,8 @@ public class Sqlite {
 		List<SObject> list;
 		try {
 			list = getDB(context).getReadMsgId();
-		} catch (Exception ex) {
+		} catch (Exception e) {
+			e.printStackTrace();
 			return null;
 		}
 		return list;
@@ -222,7 +238,8 @@ public class Sqlite {
 		long index;
 		try {
 			index = getDB(context).saveReport(rpt);
-		} catch (Exception ex) {
+		} catch (Exception e) {
+			e.printStackTrace();
 			return -1;
 		}
 		return index;
@@ -232,57 +249,26 @@ public class Sqlite {
 		long index;
 		try {
 			index = getDB(context).saveDP(rpt);
-		} catch (Exception ex) {
+		} catch (Exception e) {
+			e.printStackTrace();
 			return -1;
 		}
 		return index;
 	}
 
-	// public synchronized static boolean creatReport(Context context, Report
-	// rpt) {
-	// try {
-	// if (rpt == null)
-	// return true;
-	// // if (!((String) rpt.mData.get(-1)).equals(""))
-	//
-	// getDB(context).createReport(rpt, Rms.getUserId(context));
-	//
-	// return true;
-	// } catch (Exception ex) {
-	// return false;
-	// }
-	// }
-
-	// public synchronized static boolean deletReport(Context context, String
-	// rptId) {
-	// try {
-	// getDB(context).openDatabase();
-	// // if (!((String) rpt.mData.get(-1)).equals(""))
-	//
-	// // getDB(context).deletPhoto(Integer.parseInt(rptId));
-	// // getDB(context).deletRptDetail(Integer.parseInt(rptId));
-	// getDB(context).deletRpt(Integer.parseInt(rptId));
-	//
-	// return true;
-	// } catch (Exception ex) {
-	// return false;
-	// } finally {
-	// getDB(context).closeDatabase();
-	// }
-	// }
-
 	public static void execSingleSql(Context context, String sql) {
 		try {
 			getDB(context).execSingleSql(sql);
-		} catch (Exception ex) {
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 
 	public static List<DicData> getDictDataList(Context context, String mainDictId, String detaildicId) {
 		try {
 			return getDB(context).getDicList(mainDictId, detaildicId);
-
-		} catch (Exception ex) {
+		} catch (Exception e) {
+			e.printStackTrace();
 			return null;
 		}
 	}
@@ -290,8 +276,8 @@ public class Sqlite {
 	public static List<DicData> getAnswerList(Context context, String questionId) {
 		try {
 			return getDB(context).getAnswerList(questionId);
-
-		} catch (Exception ex) {
+		} catch (Exception e) {
+			e.printStackTrace();
 			return null;
 		}
 	}
@@ -299,8 +285,8 @@ public class Sqlite {
 	public static List<DicData> getDictDataList(Context context, String mainDictId) {
 		try {
 			return getDB(context).getDicList(mainDictId, "");
-
-		} catch (Exception ex) {
+		} catch (Exception e) {
+			e.printStackTrace();
 			return null;
 		}
 	}
@@ -314,7 +300,8 @@ public class Sqlite {
 		List<FieldsList> list = new ArrayList<FieldsList>();
 		try {
 			list = getDB(context).getFieldsListList();
-		} catch (Exception ex) {
+		} catch (Exception e) {
+			e.printStackTrace();
 			return null;
 		}
 		return list;

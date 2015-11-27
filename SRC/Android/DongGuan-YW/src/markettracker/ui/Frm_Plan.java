@@ -9,6 +9,7 @@ import java.util.List;
 import markettracker.util.CButton;
 import markettracker.util.CDateButton;
 import markettracker.util.CGrid;
+import markettracker.util.SyncData;
 import markettracker.util.SyncDataApp;
 import markettracker.util.Tool;
 import markettracker.util.Constants.AlertType;
@@ -17,6 +18,7 @@ import orient.champion.business.R;
 import markettracker.data.Fields;
 import markettracker.data.FieldsList;
 import markettracker.data.Rms;
+import markettracker.data.SObject;
 import markettracker.data.Sqlite;
 import markettracker.data.UIItem;
 import android.app.Activity;
@@ -347,6 +349,13 @@ public class Frm_Plan extends Activity implements OnClickListener, OnGestureList
 		{
 			if (resultCode == RESULT_OK)
 			{
+				if (Tool.isConnect(context)) {
+					Tool.showProgress(context, "上传计划中...");
+					SyncData.startSyncData(activity);
+				} else {
+					Tool.showErrMsg(context, "请打开网络连接");
+				}
+				
 				resetGrid();
 			}
 			else
@@ -481,6 +490,16 @@ public class Frm_Plan extends Activity implements OnClickListener, OnGestureList
 	@Override
 	protected void onResume()
 	{
+		if (Rms.getIsConnent(context)) { // 是从手机打开网络连接的页面跳转过来的
+			Rms.setIsConnent(context, false);
+			if (Tool.isConnect(context)) {
+				Tool.showProgress(context, "上传计划中...");
+				SyncData.startSyncData(activity);
+			} else {
+				Tool.showErrMsg(context, "请打开网络连接");
+			}
+		}
+		
 		Tool.setAutoTime(context);
 		if (!Rms.getLoginDate(context).equals(Tool.getCurrDate()))
 		{

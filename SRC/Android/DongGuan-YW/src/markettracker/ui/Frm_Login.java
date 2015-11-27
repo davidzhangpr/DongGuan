@@ -193,7 +193,6 @@ public class Frm_Login extends Activity implements OnClickListener, OnEditorActi
 	{
 		handler = new Handler()
 		{
-			// @Override
 			public void handleMessage(Message msg)
 			{
 				Tool.stopProgress();

@@ -663,32 +663,27 @@ public class Tool {
 
 		button = new ButtonConfig();
 		button.setId(1);
-		button.setImageId(R.drawable.plan);
-		button.setName("拜访设定");
+		button.setImageId(R.drawable.sdjh);
+		button.setName("设定计划");
 		list.add(button);
 
 		button = new ButtonConfig();
-		button.setId(6);
-		button.setName("请假");
-		button.setImageId(R.drawable.holiday);
+		button.setId(2);
+		button.setName("信息公告");
+		button.setImageId(R.drawable.xxgg);
 		list.add(button);
 
 		button = new ButtonConfig();
 		button.setId(3);
-		button.setName("消息公告");
-		button.setImageId(R.drawable.message);
+		button.setName("事项提醒");
+		button.setImageId(R.drawable.sxtx);
 		list.add(button);
 
 		button = new ButtonConfig();
-		button.setId(8);
-		button.setName("修改密码");
-		button.setImageId(R.drawable.setup);
+		button.setId(4);
+		button.setName("系统设置");
+		button.setImageId(R.drawable.xtsz);
 		list.add(button);
-
-		// button = new ButtonConfig();
-		// button.setId(5);
-		// button.setName("修改密码");
-		// list.add(button);
 
 		return list;
 	}

@@ -144,10 +144,6 @@ public class CustomGrid extends View implements OnGestureListener
 		super(context, attrs);
 	}
 	
-	// private float getStrokeWidth() {
-	// return mStrokeWidth;
-	// }
-	
 	private float getWholeStrokeWidth()
 	{
 		return mWholeStrokeWidth;
@@ -159,13 +155,11 @@ public class CustomGrid extends View implements OnGestureListener
 		super.onMeasure(widthMeasureSpec, heightMeasureSpec);
 	}
 	
-	private void drawText(Canvas canvas, String str, int left, int top, int column, int row)
+	private void drawText(Canvas canvas, String str, String isKeyStone, String isStarProduct, int left, int top, int column, int row)
 	{
 		ColumnStyle style = mColumnStyles[column];
 		mPaint.setTextSize(style.getTextSize());
 		mPaint.setTypeface(Typeface.DEFAULT);
-//		mPaint.setTypeface(Typeface.create(Typeface.SERIF, Typeface.NORMAL));
-		
 		mPaint.setStyle(Paint.Style.FILL_AND_STROKE);
 		
 		Paint.Align align = style.getAlign();
@@ -195,17 +189,20 @@ public class CustomGrid extends View implements OnGestureListener
 		}
 		FontMetrics fw = mPaint.getFontMetrics();
 		mPaint.setStrokeWidth(0);
-		// mPaint.setStyle(style);
 		if (row == 0 || (row != 0 && mSelectedY == row))
 		{
 			mPaint.setColor(Color.BLACK);
+		}else if(column == 1){
+			if("1".equals(isKeyStone)){	//必备产品
+				mPaint.setColor(Color.BLUE);
+			}else if("1".equals(isStarProduct)){	//主推产品
+				mPaint.setColor(Color.RED);
+			}
 		}
-		else
-			mPaint.setColor(Color.BLACK);
-		if (row == 0)
+		
+		if (row == 0){
 			canvas.drawText(str, l, top + mCellHeight / 2 + fw.bottom, mPaint);
-		else
-		{
+		}else{
 			if (style.getControlType() == ControlType.SELECTED)
 			{
 				if (str.equals("1"))
@@ -336,6 +333,54 @@ public class CustomGrid extends View implements OnGestureListener
 			}
 		}
 	}
+
+	/**
+	 * 得到必备产品
+	 * @param iRow
+	 * @param iColumn
+	 * @return
+	 */
+	public String getIsKeyStone(int iRow, int iColumn)
+	{
+		if ((dataList == null || dataList.size() <= 0) && iRow > 0)
+			return "";
+		if (iRow == 0)
+			return getCurrUIItem(iColumn).getCaption();
+		else
+		{
+			if (iRow > dataList.size())
+				return "";
+			else
+			{
+				return (dataList.getFields(iRow - 1)).getStrValue("iskeystone");
+			}
+		}
+	}
+
+	/**
+	 * 得到主推产品
+	 * @param iRow
+	 * @param iColumn
+	 * @return
+	 */
+	public String getIsStarProduct(int iRow, int iColumn)
+	{
+		if ((dataList == null || dataList.size() <= 0) && iRow > 0)
+			return "";
+		if (iRow == 0)
+			return getCurrUIItem(iColumn).getCaption();
+		else
+		{
+			if (iRow > dataList.size())
+				return "";
+			else
+			{
+				return (dataList.getFields(iRow - 1)).getStrValue("isstarproduct");
+			}
+		}
+	}
+	
+	
 	
 	// private String getResultByKey(int iRow, String key) {
 	// if ((mDataList == null || mDataList.size() <= 0) && iRow > 0)
@@ -443,7 +488,7 @@ public class CustomGrid extends View implements OnGestureListener
 					drawRect(canvas, mRect, j, i);
 					
 					// String str = getResult(i, j); // mDataSource[i][j];
-					drawText(canvas, getResult(i, j), left, top, j, i);
+					drawText(canvas, getResult(i, j), getIsKeyStone(i, j), getIsStarProduct(i, j), left, top, j, i);
 					
 					canvas.restore();
 					
@@ -467,8 +512,7 @@ public class CustomGrid extends View implements OnGestureListener
 			
 			drawRect(canvas, mRect, i, 0);
 			
-			// String str = getResult(0, i); // mDataSource[0][i];
-			drawText(canvas, getResult(0, i), left, 0, i, 0);
+			drawText(canvas, getResult(0, i), getIsKeyStone(0, i), getIsStarProduct(0, i), left, 0, i, 0);
 			
 			canvas.restore();
 		}
@@ -490,7 +534,7 @@ public class CustomGrid extends View implements OnGestureListener
 			drawRect(canvas, mRect, i, 0);
 			
 			// String str = getResult(0, i);// mDataSource[0][i];
-			drawText(canvas, getResult(0, i), left, top, i, 0);
+			drawText(canvas, getResult(0, i), getIsKeyStone(0, i), getIsStarProduct(0, i), left, top, i, 0);
 			
 			canvas.restore();
 			
@@ -524,7 +568,7 @@ public class CustomGrid extends View implements OnGestureListener
 					drawRect(canvas, mRect, j, i);
 					
 					// String str = getResult(i, j);// mDataSource[i][j];
-					drawText(canvas, getResult(i, j), left, top, j, i);
+					drawText(canvas, getResult(i, j), getIsKeyStone(i, j), getIsStarProduct(i, j), left, top, j, i);
 					canvas.restore();
 				}
 				// 表格看不见的地方，则不draw，提高性能

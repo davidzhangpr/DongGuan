@@ -3,6 +3,7 @@ package markettracker.ui;
 import orient.champion.business.R;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
@@ -10,6 +11,7 @@ import java.util.List;
 import markettracker.util.CButton;
 import markettracker.util.CCellTakePhoto;
 import markettracker.util.CImageView;
+import markettracker.util.ChoiceGroupAdapter;
 import markettracker.util.Constants;
 import markettracker.util.CustomGrid;
 import markettracker.util.NumericKeyboard;
@@ -22,6 +24,7 @@ import markettracker.util.NumericKeyboard.OnNumberClickListener;
 import markettracker.data.ButtonConfig;
 import markettracker.data.DicData;
 import markettracker.data.Fields;
+import markettracker.data.FieldsList;
 import markettracker.data.Panal;
 import markettracker.data.Rms;
 import markettracker.data.SObject;
@@ -81,7 +84,7 @@ public class Frm_Rpt extends Activity implements OnClickListener {
 	private SObject report;
 	private static final int TAKE_PICTURE = 3021;
 
-	private TextView title, title1;
+	private TextView title,category;
 	private Fields selectData;
 	private Handler handler;
 	private String key;
@@ -91,7 +94,7 @@ public class Frm_Rpt extends Activity implements OnClickListener {
 	private LinearLayout.LayoutParams layoutParamsPhoto = new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, 200);
 
 	private SyncDataApp application;
-
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -117,6 +120,23 @@ public class Frm_Rpt extends Activity implements OnClickListener {
 		initTitle();
 		initReport();
 		initPage();
+		
+		initCategory();
+	}
+	
+	/**
+	 * 初始化品类信息
+	 */
+	private void initCategory(){
+		if("2".equals(template.getType()) || "12".equals(template.getType()) || "22".equals(template.getType())){	//分销管理(门店)，库存检查(经销商)
+			//显示提示文字和品类单选框
+			LinearLayout ll_rpt_prompt = (LinearLayout) findViewById(R.id.ll_rpt_prompt);
+			ll_rpt_prompt.setVisibility(View.VISIBLE);
+			
+			//得到选择品类的控件
+			category = (TextView) findViewById(R.id.tv_rpt_category);
+			category.setOnClickListener(this);
+		}
 	}
 
 	private void initHandler() {
@@ -181,27 +201,89 @@ public class Frm_Rpt extends Activity implements OnClickListener {
 	private void initTitle() {
 		title = (TextView) findViewById(R.id.txt);
 		title.setText(this.getIntent().getStringExtra("name"));
-
-		title1 = (TextView) findViewById(R.id.txt1);
 	}
 
 	private void initReport() {
 		template = TemplateFactory.getTemplate(context, this.getIntent().getStringExtra("type"));
-		report = Sqlite.getReport(context, template, this.getIntent().getStringExtra("teminalCode"), 1, key);
-		
-		if ("9".equals(template.getType())) { // BA检查
-			List<DicData> dictList = Sqlite.getDictDataList(context, "101115", "");
-			if (template.getOnlyType() != (9 * 1000 + dictList.size())) {
-				report.getFields().getHashMap().put("str1",
-						dictList.get(template.getOnlyType() - 9 * 1000 - 1).getItemname());
+		if("3".equals(template.getType())){	//促销活动(纸品)
+			if(getIntent().getStringExtra("size") != null){
+				template.setOnlyType(Integer.parseInt(getIntent().getStringExtra("size"))+(3*1000)+1);
 			}
 		}
-		
-		if("12".equals(template.getType())){	//销售日报
-			report.getFields().getHashMap().put("str1",getIntent().getStringExtra("date"));
+		if("13".equals(template.getType())){	//促销活动(卫品)
+			if(getIntent().getStringExtra("size") != null){
+				template.setOnlyType(Integer.parseInt(getIntent().getStringExtra("size"))+(13*1000)+1);
+			}
 		}
 
+		report = Sqlite.getReport(context, template, this.getIntent().getStringExtra("teminalCode"), 1, key);
+		
 		report.setField("ClientType", this.getIntent().getStringExtra("clienttype"));
+		
+		if("3".equals(template.getType()) || "13".equals(template.getType())){
+			if(!"".equals(getIntent().getStringExtra("type2"))){	//促销活动反馈
+				title.setText("促销活动反馈");
+				
+				if(getIntent().getBooleanExtra("isSystem", false) == false){	//非系统促销活动反馈
+					SObject reReport = report;
+					template = TemplateFactory.getTemplate(context, this.getIntent().getStringExtra("type2"));
+					template.setOnlyType(Integer.parseInt(reReport.getField("serverid")));
+					report = Sqlite.getReport(context, template, this.getIntent().getStringExtra("teminalCode"), 1, key);
+					report.setField("int1", reReport.getField("serverid"));
+					report.setField("str4", reReport.getField("str1"));
+					report.setField("str2", reReport.getField("str2"));
+					report.setField("str3", reReport.getField("str3"));
+					report.setField("ClientType", this.getIntent().getStringExtra("clienttype"));
+					
+					Fields data = new Fields();
+					if("4".equals(this.getIntent().getStringExtra("type2"))){
+						data.Set("dicttype", "211");
+					}else{
+						data.Set("dicttype", "216");
+					}
+					data.Set("dictclass", reReport.getField("int2"));
+					FieldsList list = Sqlite.getFieldsList(context, 414, data);
+					String promotion = "";
+					if(list.getList() != null){
+						promotion = list.getFields(0).getStrValue("dictname");
+					}
+					
+					report.setField("str5", promotion);
+					
+					if("".equals(report.getField("str1"))){
+						report.setField("str1", "地堆一平米，地堆两平米");
+					}
+				}else{
+					template = TemplateFactory.getTemplate(context, this.getIntent().getStringExtra("type2"));
+					template.setOnlyType(Integer.parseInt(getIntent().getStringExtra("serverid")));
+					report = Sqlite.getReport(context, template, this.getIntent().getStringExtra("teminalCode"), 1, key);
+					report.setField("int1", getIntent().getStringExtra("serverid"));
+					report.setField("str4", getIntent().getStringExtra("oaodd"));
+					report.setField("str2", getIntent().getStringExtra("beginTime"));
+					report.setField("str3", getIntent().getStringExtra("endTime"));
+					report.setField("ClientType", this.getIntent().getStringExtra("clienttype"));
+					
+					Fields data = new Fields();
+					if("4".equals(this.getIntent().getStringExtra("type2"))){
+						data.Set("dicttype", "211");
+					}else{
+						data.Set("dicttype", "216");
+					}
+					data.Set("dictclass", getIntent().getStringExtra("promotion"));
+					FieldsList list = Sqlite.getFieldsList(context, 414, data);
+					String promotion = "";
+					if(list.getList() != null){
+						promotion = list.getFields(0).getStrValue("dictname");
+					}
+					
+					report.setField("str5", promotion);
+					
+					if("".equals(report.getField("str1"))){
+						report.setField("str1", "地堆一平米，地堆两平米");
+					}
+				}
+			}
+		}
 	}
 
 	private void initPage() {
@@ -309,13 +391,11 @@ public class Frm_Rpt extends Activity implements OnClickListener {
 		if (template != null && template.haveTable()) {
 			if (productLine == null) {
 				productLine = (LinearLayout) findViewById(R.id.line_rpt_product);
-				// productLine.setPadding(20, 0, 20, 20);
 			}
 			productLine.addView(getCustomGrid(template.getTableItem()));
 
 			if (!template.havePanal()) {
 				productLine.setVisibility(View.VISIBLE);
-				// productLine.setAnimation(Tool.getAnimation(context));
 			}
 		}
 	}
@@ -371,69 +451,18 @@ public class Frm_Rpt extends Activity implements OnClickListener {
 
 	private int mIndex;
 
-	// private ImageView getRptPhoto(int index, Bitmap bitmap) {
-	// imageView[index] = new ImageView(context);
-	// imageView[index].setId(index - 100);
-	//
-	// layoutParamsPhoto.topMargin = 10;
-	//
-	// imageView[index].setLayoutParams(layoutParamsPhoto);
-	//
-	// // imageView[index].setMinimumWidth(Tool.getScreenWidth()-20);
-	// // imageView[index].setMinimumHeight(200);
-	// // mButton[index].setBackgroundColor(R.color.selectrect);
-	// if (bitmap == null)
-	// imageView[index]
-	// .setImageResource(R.drawable.camera1);
-	// else
-	// imageView[index].setImageBitmap(bitmap);
-	//
-	// imageView[index].setOnClickListener(this);
-	// return imageView[index];
-	// }
-
 	private OnTouchListener getOnTouchListener() {
 
 		OnTouchListener listener = new OnTouchListener() {
 
 			public boolean onTouch(View v, MotionEvent event) {
-				// TODO Auto-generated method stub
-
-				// float x = event.getX();
 				if (event.getAction() == MotionEvent.ACTION_DOWN) {
-					// startx = x;
 				}
 				if (event.getAction() == MotionEvent.ACTION_UP) {
-					// endx = event.getX();
-					// sx = (int) startx;
-					// ex = (int) endx;
-					// CDeleteButton button = ((CImage) v).getDelete();
-					// boolean bHave = photo.get(v.getId()) == null ? false :
-					// true;// report.isHavePhoto(100
-					// +
-					// v.getId());
-
-					// if (Math.abs(sx - ex) > 10 && bHave) {
-					// if (sx > ex) {
-					//
-					// // photoLine.removeViewAt(100 + v.getId());
-					// button.setVisibility(View.VISIBLE);
-					// // button.setAnimation(Tool.getAnimation(context));
-					// } else {
-					// button.setVisibility(View.GONE);
-					// // button
-					// // .setAnimation(Tool
-					// // .getRightAnimation(context));
-					// }
-					// } else {
-					// button.setVisibility(View.GONE);
-					// button.setAnimation(Tool.getRightAnimation(context));
 					mIndex = 100 + v.getId();
 					OpenCarmer();
 					if (template.getOnlyType() > 5000 && template.getOnlyType() < 5999)
 						clickImgView = (CImageView) v;
-
-					// }
 				}
 				return true;
 			}
@@ -445,7 +474,6 @@ public class Frm_Rpt extends Activity implements OnClickListener {
 		OnClickListener listener = new OnClickListener() {
 
 			public void onClick(View v) {
-				// TODO Auto-generated method stub
 				delView(v.getId());
 			}
 		};
@@ -473,20 +501,6 @@ public class Frm_Rpt extends Activity implements OnClickListener {
 		return imageView[index];
 	}
 
-	// public void OpenCarmer()
-	// {
-	// try
-	// {
-	// Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);//
-	// "android.media.action.IMAGE_CAPTURE"
-	// startActivityForResult(intent, TAKE_PICTURE);
-	// }
-	// catch (Exception e)
-	// {
-	// e.printStackTrace();
-	// }
-	// }
-
 	public void OpenCarmer() {
 		try {
 			Tool.createPhotoFile();
@@ -499,46 +513,11 @@ public class Frm_Rpt extends Activity implements OnClickListener {
 	}
 
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		// super.onActivityResult(requestCode, resultCode, data);
 		String strErrMsg = "";
 		try {
 			if (resultCode == RESULT_OK) {
-				// strErrMsg+="1";
 				if (requestCode == TAKE_PICTURE) {
-					// strErrMsg+="2";
-					// final Fields photo = new Fields();
-					// // strErrMsg+="3";
-					// final Bitmap bm = (Bitmap) data.getExtras().get("data");
-					// boolean bHave = report.isHavePhoto(mIndex);
-					//
-					// photo.setShotTime(Tool.getCurrPhotoTime());
-					// photo.setPhoto(Tool.Bitmap2Bytes(bm));
-					//
-					// if (bHave)
-					// report.setAttfield(mIndex, photo);
-					// else
-					// report.setAttfield(photo);
-					// imageView[mIndex].setImageBitmap(bm);//
-					// 想图像显示在ImageView视图上，private
-					//
-					// if (!bHave) {
-					// photoLine.addView(getRptPhoto(mTotalPhoto, null));
-					// mTotalPhoto++;
-					// }
-
-					// 1 final Bitmap bm = (Bitmap)
-					// data.getExtras().get("data");
 					final Bitmap bm = Tool.lessenUriImage();
-					// photo.setShotTime(Tool.getCurrPhotoTime());
-					// photo.setPhoto(Tool.Bitmap2Bytes(bm));
-					//
-					// if (bHave)
-					// report.setAttfield(mIndex, photo);
-					// else
-					// report.setAttfield(photo);
-					// imageView[mIndex].setImageBitmap(bm);//
-					// 想图像显示在ImageView视图上，private
-
 					String date = Tool.getCurrPhotoTime();
 					Bitmap bm1 = Tool.generatorContactCountIcon(bm, date,
 							this.getIntent().getStringExtra("terminalname"), getIntent().getStringExtra("name"),context);
@@ -565,38 +544,13 @@ public class Frm_Rpt extends Activity implements OnClickListener {
 			Tool.showToastMsg(context, "拍照错误" + strErrMsg + e.getMessage(), AlertType.ERR);
 
 		}
-		// super.onActivityResult(requestCode, resultCode, data);
 	}
 
 	private int mTotalPhoto = 1;
 
-	// private void initPhotoLine() {
-	// if (photoSView == null)
-	// photoSView = (ScrollView) findViewById(R.id.sv_photo);
-	//
-	// photoLine = (LinearLayout) findViewById(R.id.line_rpt_photo);
-	// mTotalPhoto = report.getAttCount() + 1;
-	// imageView = new ImageView[100];
-	// Bitmap bitmap = null;
-	// byte[] bytes;
-	// Fields data;
-	// for (int i = 0; i < mTotalPhoto; i++) {
-	// try {
-	// data = report.getAttfields().getFields(i);
-	// bytes = data.getPhoto();
-	// bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-	// } catch (Exception ex) {
-	// bitmap = null;
-	// }
-	// photoLine.addView(getRptPhoto(i, bitmap));
-	// }
-	// }
-
 	private Fields getPhotoData(DicData dicData) {
-		// mTotalPhoto = report.getAttCount() + 1;
 		Fields data;
 		for (int i = 0; i < report.getAttCount(); i++) {
-
 			data = report.getAttfields().getFields(i);
 			if (data.getStrValue("displayobject").equals(dicData.getValue()))
 				return data;
@@ -604,7 +558,6 @@ public class Frm_Rpt extends Activity implements OnClickListener {
 		data = new Fields();
 		data.put("displayobject", dicData.getValue());
 		return data;
-
 	}
 
 	private HashMap<Integer, Fields> photo = new HashMap<Integer, Fields>();
@@ -620,55 +573,33 @@ public class Frm_Rpt extends Activity implements OnClickListener {
 			int index = 0;
 
 			for (DicData dictdata : list) {
-
 				photo.put(index - 100, getPhotoData(dictdata));
-				// setPhotoData(index,dictdata);
 				photoLine.addView(new RptTable(context, dictdata, photo, getOnTouchListener(), index));
 				index++;
 			}
 		} else {
 			mTotalPhoto = report.getAttCount() + 1;
 			imageView = new CImageView[100];
-			// Bitmap bitmap = null;
-			// byte[] bytes;
 			Fields data;
 			for (int i = 0; i < mTotalPhoto; i++) {
 				try {
 					data = report.getAttfields().getFields(i);
 
 					photo.put(i - 100, data);
-					// bytes = data.getPhoto();
-					// bitmap = BitmapFactory.decodeByteArray(bytes, 0,
-					// bytes.length);
-				} catch (Exception ex) {
-					// bitmap = null;
+				} catch (Exception e) {
+					e.printStackTrace();
 				}
 				photoLine.addView(getRptPhoto(i));
 			}
 		}
-		if ((template.getOnlyType() > 5000 && template.getOnlyType() < 5999))
-			photoSView.setVisibility(View.VISIBLE);
-		/*
-		mTotalPhoto = report.getAttCount() + 1;
 
-		imageView = new CImageView[100];
-		Bitmap bitmap = null;
-		byte[] bytes;
-		Fields data;
-		for (int i = 0; i < mTotalPhoto; i++) {
-			try {
-				
-				data = report.getAttfields().getFields(i);
-				
-				bytes = data.getPhoto();
-				bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-			} catch (Exception ex) {
-				bitmap = null;
-			}
-			photoLine.addView(getRptPhoto(i, bitmap));
-		}*/
+//		// 纸品或者卫品的陈列检查
+//		if ("1".equals(template.getType()) || "11".equals(template.getType())){
+//			photoSView.setVisibility(View.VISIBLE);
+//		}
 	}
 	
+	@SuppressWarnings("unused")
 	private CImageView getRptPhoto(int index, Bitmap bitmap) {
 
 		imageView[index] = new CImageView(context, template,
@@ -687,14 +618,6 @@ public class Frm_Rpt extends Activity implements OnClickListener {
 		imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
 	}
 
-	// private void showKey(View v)
-	// {
-	// InputMethodManager imm =
-	// (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-	// imm.showSoftInput(v, 0);
-	//
-	// }
-	//
 	private void resetPage(int id) {
 
 		switch (id) {
@@ -704,9 +627,7 @@ public class Frm_Rpt extends Activity implements OnClickListener {
 			if (photoSView != null)
 				photoSView.setVisibility(View.GONE);
 			if (mainSView != null) {
-				// showKey(mainSView);
 				mainSView.setVisibility(View.VISIBLE);
-				// mainSView.setAnimation(Tool.getAnimation(context));
 			}
 			break;
 		case 2:
@@ -717,7 +638,6 @@ public class Frm_Rpt extends Activity implements OnClickListener {
 			if (productLine != null) {
 				hideKey(productLine);
 				productLine.setVisibility(View.VISIBLE);
-				// productLine.setAnimation(Tool.getAnimation(context));
 			}
 			break;
 		case 3:
@@ -754,6 +674,10 @@ public class Frm_Rpt extends Activity implements OnClickListener {
 				SaveData();
 				break;
 
+			case R.id.tv_rpt_category:
+				showSingleChoiceDialog();
+				break;
+
 			default:
 				resetPage(v.getId());
 				break;
@@ -761,6 +685,100 @@ public class Frm_Rpt extends Activity implements OnClickListener {
 		}
 	}
 
+	private AlertDialog singleChoiceDialog;
+	private int itemIndex = -1;
+	private void showSingleChoiceDialog()
+	{
+		UIItem item = new UIItem();
+		
+		if("2".equals(template.getType())){	//纸品
+			item.setDicId("222");
+		}else if("12".equals(template.getType())){	//卫品
+			item.setDicId("122");
+		}else if("22".equals(template.getType())){	//库存检查
+			item.setDicId("322");
+		}
+		
+		final ChoiceGroupAdapter choiceGroupAdapter = new ChoiceGroupAdapter(getContext(), item);
+		
+		AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+		builder.setTitle("品类选择");
+		builder.setSingleChoiceItems(choiceGroupAdapter, itemIndex, new DialogInterface.OnClickListener()
+		{
+			public void onClick(DialogInterface dialog, int which)
+			{
+				itemIndex = which;
+				category.setText(choiceGroupAdapter.getName(which));
+				resetReportByCategory(choiceGroupAdapter.getValue(which));
+				dialog.dismiss();
+			}
+		});
+		builder.setNegativeButton("取消", null);
+		singleChoiceDialog = builder.create();
+		singleChoiceDialog.show();
+	}
+	
+	
+	private List<Fields> checkedArray = new ArrayList<Fields>();
+	/**
+	 * 根据品类id来重新加载数据
+	 * @param levelid
+	 */
+	private void resetReportByCategory(String levelid){
+		//得到用户选中的数据
+		for(Fields f : report.getDetailfields().getList()){
+			if("2".equals(template.getType()) || "12".equals(template.getType())){	//分销管理（纸品和卫品）
+				if("1".equals(f.getStrValue("int1")) || "1".equals(f.getStrValue("int2"))){
+					checkedArray.add(f);
+				}
+			}else{	//库存检查（经销商）
+				if(f.getStrValue("int1") != null && !"".equals(f.getStrValue("int1"))){
+					checkedArray.add(f);
+				}
+			}
+		}
+		
+		//得到所有品类的产品
+		Rms.setCheckProduct(context, true);	// 开启辅助
+		FieldsList fieldsGroup = Sqlite.getReport(context, template, this.getIntent().getStringExtra("teminalCode"), 1, key).getDetailfields();
+		List<Fields> fieldsArray = fieldsGroup.getList();
+		//存放用户选择的品类下的产品
+		List<Fields> newFieldsGroup = new ArrayList<Fields>();
+		for(Fields fields : fieldsArray){
+			if("all".equals(levelid)){	//添加所有产品
+				newFieldsGroup.add(fields);
+			}else{	//添加用户选择的品类下的产品
+				if(levelid.equals(fields.getStrValue("levelid"))){
+					newFieldsGroup.add(fields);
+				}
+			}
+		}
+		
+		//如果选中的数据集当中有当前品类的就在当前品类中替换掉,并排序，选中的排前面
+		List<Fields> newFieldsGroup2 = new ArrayList<Fields>();	//用来存放排序后的数据
+		for(int i=0; i<newFieldsGroup.size(); i++){
+			for(Fields checkedf : checkedArray){
+				if(newFieldsGroup.get(i).getStrValue("serverid").equals(checkedf.getStrValue("serverid"))){
+					newFieldsGroup.remove(i);	//在数据集合中删除选中的数据，留下未选中的数据
+					newFieldsGroup2.add(checkedf);	//添加选中的数据
+				}
+			}
+		}
+		
+		//添加未选中的数据
+		for(Fields f : newFieldsGroup){
+			newFieldsGroup2.add(f);
+		}
+		
+		//刷新页面
+		report.getDetailfields().setList(newFieldsGroup2);
+		initData();
+		customGrid.setDataInfo(template.getTableItem(), report.getDetailfields());
+		customGrid.setDataHashtable(hashtable);
+		customGrid.setLinkHandler(handler);
+		customGrid.invalidate();
+	}
+	
 	private void showBackDialog(final int type) {
 		stopDialog(backAlertDialog);
 		Builder builder = new AlertDialog.Builder(context);
@@ -807,47 +825,67 @@ public class Frm_Rpt extends Activity implements OnClickListener {
 	}
 
 	private void SaveData() {
+		//分销管理（纸品和卫品）	库存检查（经销商）
+		if("2".equals(template.getType()) || "12".equals(template.getType()) || "22".equals(template.getType())){
+			//得到用户选中的数据
+			for(Fields f : report.getDetailfields().getList()){
+				if("2".equals(template.getType()) || "12".equals(template.getType())){	//分销管理（纸品和卫品）
+					if("1".equals(f.getStrValue("int1")) || "1".equals(f.getStrValue("int2"))){
+						checkedArray.add(f);
+					}
+				}else{	//库存检查（经销商）
+					if(f.getStrValue("int1") != null && !"".equals(f.getStrValue("int1"))){
+						checkedArray.add(f);
+					}
+				}
+			}
+			
+			Rms.setCheckProduct(context, true);	// 开启辅助
+			report = Sqlite.getReport(context, template, this.getIntent().getStringExtra("teminalCode"), 1, key);
+			//如果选中的数据集当中有当前品类的就在当前品类中替换掉
+			for(int i=0; i<report.getDetailfields().getList().size(); i++){
+				for(Fields checkedf : checkedArray){
+					if(report.getDetailfields().getList().get(i).getStrValue("serverid").equals(checkedf.getStrValue("serverid"))){
+						report.getDetailfields().getList().remove(i);
+						report.getDetailfields().getList().add(checkedf);
+					}
+				}
+			}
+		}
+		
 		String errMsg = report.checkData();
 		if (errMsg.equals("")) {
-
-			/*
-			 * if(report.getField("int3").equals("1")) { boolean have=false;
-			 * if(report.getAttCount()>0) { for(Fields photo :
-			 * report.getAttfields().getList()) {
-			 * if(photo.getStrValue("remark").equals("促销拍照")) { have=true;
-			 * break; } } } if(!have) { Tool.showToastMsg(context, "请拍摄促销照片",
-			 * AlertType.ERR); return; } }
-			 */
-
 			Tool.showProgress(context, "");
-//			if (template.haveTable())
-//				report.setDetailfields(customGrid.getDataList());
 			
-			//不是 事件类型的报告,BA检查报告,竞品报告,拜访总结,销售日报
-			if(!"20".equals(template.getType()) && !"9".equals(template.getType()) 
-					&& !"10".equals(template.getType()) && !"11".equals(template.getType()) 
-					&& !"12".equals(template.getType())){
-				report.getFields().getHashMap().put("int1", Rms.getBrandID(context));
+			if("1".equals(template.getType())){	//陈列检查（纸品）
+				report.setField("int1", (template.getOnlyType()-1000)+"");
 			}
 
-			if ("9".equals(template.getType())) { // BA检查报告
-				report.getFields().getHashMap().put("int2", (template.getOnlyType() - 9 * 1000) + "");
+			if("11".equals(template.getType())){//陈列检查（卫品）
+				report.setField("int1", (template.getOnlyType()-11*1000)+"");
 			}
-
-			if ("10".equals(template.getType())) {	//竞品报告
-				report.getFields().getHashMap().put("int2", (template.getOnlyType() - 10 * 10000) + "");
+			
+			//分销管理，库存检查
+			if("22".equals(template.getType()) || "2".equals(template.getType()) || "12".equals(template.getType())){
+				report.setField("ClientType", "1");
 			}
-
-			//促销活动报告、试用装检查报告
-			if ("3".equals(template.getType()) || "5".equals(template.getType())) {
-				report.getFields().getHashMap().put("int3", getIntent().getStringExtra("itemID"));
+			
+			//促销活动
+			if("3".equals(template.getType()) || "13".equals(template.getType())){
+				report.setField("int1", this.getIntent().getStringExtra("teminalCode"));
+				
+				if(report.getField("str10") == null || "".equals(report.getField("str10"))){
+					report.setField("str10", Tool.getMyUUID());
+				}
 			}
-
+			
 			long index = Sqlite.saveReport(context, report);
 
 			Tool.stopProgress();
 			if (index > 0) {
-				Tool.showToastMsg(context, "报告保存成功", AlertType.INFO);
+				if(!"3".equals(template.getType()) && !"13".equals(template.getType()) && !"4".equals(template.getType()) && !"14".equals(template.getType())){
+					Tool.showToastMsg(context, "报告保存成功", AlertType.INFO);
+				}
 				finish(RESULT_OK);
 			} else
 				Tool.showToastMsg(context, "报告保存失败", AlertType.ERR);

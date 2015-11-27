@@ -83,12 +83,12 @@ public class CButton extends TextView {
 			this.setTextColor(getResources().getColor(R.color.black));
 		this.setLayoutParams(new LinearLayout.LayoutParams(Tool.dip2px(
 				getContext(), 38), Tool.dip2px(getContext(), 32)));
-		if (data.getStrValue("select").equals("1"))
-			this.setBackgroundDrawable(getResources().getDrawable(
-					R.drawable.selected));
-		else
-			this.setBackgroundDrawable(getResources().getDrawable(
-					R.drawable.date));
+		if (data.getStrValue("select").equals("1")){	//选中
+			this.setBackgroundResource(R.drawable.plan_btn_select_checked);
+			this.setTextColor(getResources().getColor(R.color.white));
+		}else{	//未选中
+			this.setBackgroundDrawable(getResources().getDrawable(R.drawable.plan_btn_select_unchecked));
+		}
 		this.setGravity(Gravity.CENTER);
 		this.setOnClickListener(listener);
 	}

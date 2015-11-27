@@ -27,6 +27,10 @@ public class Rms
 	private static final String DeclareType = "declareType";
 	
 	private static final String IsChange = "isChange";
+
+	private static final String CHECKPRODUCT = "checkProduct";
+	
+	private static final String ISCONNENT = "isConnent";
 	
 	private static SharedPreferences mRms;
 	
@@ -213,6 +217,22 @@ public class Rms
 	
 	public static Boolean getIsChange(Context context) {
 		return	getBoolean(context, IsChange);
+	}
+
+	public static void setCheckProduct(Context context, Boolean checkproduct) {
+		putBoolean(context, CHECKPRODUCT, checkproduct);
+	}
+	
+	public static Boolean getCheckProduct(Context context) {
+		return	getBoolean(context, CHECKPRODUCT , false);
+	}
+	
+	public static void setIsConnent(Context context, boolean isConnent) {
+		putBoolean(context,ISCONNENT, isConnent);
+	}
+	
+	public static boolean getIsConnent(Context context) {
+		return getBoolean(context,ISCONNENT, false);	
 	}
 	
 }

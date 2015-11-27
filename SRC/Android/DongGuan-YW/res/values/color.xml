@@ -12,5 +12,8 @@
     <color name="transparent">#00000000</color>
     <color name="grey">#6D6D6D</color>
     <color name="top_bg">#3A318D</color>
+    <color name="main">#36308A</color>
+    <color name="user_bg">#EDEBFF</color>
+    <color name="menu_text">#EAE8DB</color>
 
 </resources>

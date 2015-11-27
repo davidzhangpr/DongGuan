@@ -13,21 +13,13 @@ import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase; //import android.database.sqlite.SQLiteException;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.database.sqlite.SQLiteDatabase; 
 import android.util.Base64;
 import android.view.Gravity;
 import android.widget.LinearLayout;
 
-/**
- * @author Bruce
- * 
- */
 @SuppressLint("DefaultLocale")
 public class DB {
-
-	// private static final String TAG = "parrow";
 
 	private static final String SERVERID = "ServerId";
 
@@ -50,6 +42,81 @@ public class DB {
 		setUpDb();
 	}
 
+	/**
+	 * 保存设定计划数据
+	 * @param report
+	 * @return
+	 */
+	public synchronized long savePlan(SObject report) {
+		long rowId = -1;
+		try {
+			execSingleSql("DELETE FROM t_data_callreportdetail where callReportId in (select key_id from t_data_callreport where templateid = '"+report.getField("templateid")+"' and reportdate = '"+report.getField("reportdate")+"')");
+			execSingleSql("DELETE FROM t_data_callreport where key_id in (select key_id from t_data_callreport where templateid = '"+report.getField("templateid")+"' and reportdate = '"+report.getField("reportdate")+"')");
+			
+			openDatabase();
+			beginTransaction();
+
+			ContentValues values = new ContentValues();
+			DBMainConfig dc = DBConfig.getDBMainConfig("t_data_callreport");
+			for (DBDetailConfig detail : dc.getFieldList()) {
+				values.put(detail.getFieldName(),
+						report.getField(detail.getFieldName()));
+			}
+			values.put("issubmit", 0);
+			values.put("UpDateTime", Tool.getCurrDateTime());
+			values.put("InSertTime", Tool.getCurrDateTime());
+			rowId = db.insert("t_data_callreport", null, values);
+
+			createSetPlanReportDetail(report.getDetailfields(), rowId);
+			setTransactionSuccessful();
+		} finally {
+			endTransaction();
+			closeDatabase();
+		}
+		
+		return rowId;
+	}
+	
+	/**
+	 * 保存设定计划详细数据
+	 * @param list
+	 * @param rptId
+	 * @return
+	 */
+	private synchronized long createSetPlanReportDetail(FieldsList list, long rptId) {
+		if (list == null || list.getList() == null)
+			return -1;
+		long rowId = -1;
+		ContentValues values = null;
+		DBMainConfig dc = DBConfig.getDBMainConfig("t_data_callreportdetail");
+		for (Fields data : list.getList()) {
+			if(data.getStrValue("selected").equals("1")){
+				values = new ContentValues();
+				for (DBDetailConfig detail : dc.getFieldList()) {
+					if (detail.getFieldName().equalsIgnoreCase("productid")){
+						values.put("productid",data.getStrValue("serverid"));
+					}
+					else if (detail.getFieldName().equalsIgnoreCase("int1")){
+						values.put("int1",data.getStrValue("outlettype"));
+					}
+					else if (detail.getFieldName().equalsIgnoreCase("callReportId")){
+						values.put("callReportId", rptId);
+					}
+					else{
+						values.put(detail.getFieldName(),data.getStrValue(detail.getFieldName()));
+					}
+				}
+				
+				values.put("UpDateTime", Tool.getCurrDateTime());
+				values.put("InSertTime", Tool.getCurrDateTime());
+				
+				rowId = db.insert("t_data_callreportdetail", null, values);
+			}
+		}
+
+		return rowId;
+	}
+	
 	public synchronized long setPlan(SObject report) {
 		if (report == null)
 			return -1;
@@ -181,8 +248,8 @@ public class DB {
 		List<String> listSql = new ArrayList<String>();
 		List<DBMainConfig> list = DBConfig.getTableList();
 		for (DBMainConfig dm : list) {
-			strSql = "CREATE TABLE IF NOT EXISTS " + Tool.toLowerCase(dm.getTableName()) + "( " + TableInfo.TABLE_KEY
-					+ " INTEGER PRIMARY KEY not null ,";
+			strSql = "create table if not exists " + Tool.toLowerCase(dm.getTableName()) + "( " + TableInfo.TABLE_KEY
+					+ " integer primary key not null ,";
 			for (DBDetailConfig dc : dm.getFieldList()) {
 				strSql += Tool.toLowerCase(dc.getFieldName()) + " " + dc.getType();
 				if (!dc.isNull())
@@ -191,9 +258,9 @@ public class DB {
 					strSql += " UNIQUE ";
 				strSql += ",";
 			}
-			strSql += "issubmit INTEGER DEFAULT -1, " + "isdel INTEGER DEFAULT 0, "
+			strSql += "issubmit integer default -1, " + "isdel integer default 0, "
 
-			+ "updatetime TIMESTAMP DEFAULT CURRENT_TIMESTAMP, " + "inserttime TIMESTAMP DEFAULT CURRENT_TIMESTAMP);";
+			+ "updatetime timestamp default current_timestamp, " + "inserttime timestamp default current_timestamp);";
 			listSql.add(strSql);
 		}
 		execSqlList(listSql);
@@ -223,10 +290,22 @@ public class DB {
 		return count;
 	}
 
-	public synchronized int getUnReadMsgCount() {
+	/**
+	 * 查询未下载的信息公告和未读的事项提醒
+	 * @param type	2=信息公告 3=事项提醒
+	 * @return
+	 */
+	public synchronized int getUnReadMsgCount(int type) {
 		int count = 0;
-		String strSql = "select sum(count) as count from (select count(*) as count from t_message_detail where status!='已读' union "
-				+ "select count(*) as count from t_psq_payout where clienttype=0 and issubmit !=1)";
+		
+		String strSql = "";
+		if(type == 2){	//信息公告
+			strSql = "select count(issubmit) as count from t_train_list where isdel = 0 and issubmit != 0";
+		}else if(type == 3){	//事项提醒
+			strSql = "select sum(count) as count from (select count(*) as count from t_message_detail where status!='已读' union "
+					+ "select count(*) as count from t_psq_payout where clienttype=0 and issubmit !=1)";
+		}
+		
 
 		Cursor c = null;
 		try {
@@ -400,33 +479,6 @@ public class DB {
 	}
 
 	public synchronized FieldsList getFieldsList(int type, Fields data) {
-		/*
-		 * Fields fields; FieldsList list = new FieldsList(); String strSql =
-		 * "";
-		 * 
-		 * if (type == 0) strSql =
-		 * "select t.serverid as serverid, t.fullname as terminalname from (select * from  T_Visit_Plan_Detail where visittime ='"
-		 * + data.getStrValue("date") +
-		 * "' and isdel=0 and issubmit!=2)plan left join t_outlet_main t on plan.clientid=t.serverid order by cast(t.outletid as int)"
-		 * ; else if (type == 5) { strSql =
-		 * "SELECT t.* ,case when p.key_id is not null then 1 else 0 end as selected FROM t_outlet_main t left join (select * from  T_Visit_Plan_Detail  where visittime ='"
-		 * + data.getStrValue("date") +
-		 * "' and isdel=0 and issubmit!=2) p on t.serverid=p.clientid order by selected desc,OutletType desc,serverid, fullname "
-		 * ; }
-		 * 
-		 * else { strSql =
-		 * "select * ,0 as selected from t_outlet_main where fullname like '%" +
-		 * data.getStrValue("code") + "%' or outletcode like '%" +
-		 * data.getStrValue("code") +
-		 * "%' order by OutletType desc ,serverid,fullname  "; } Cursor c =
-		 * null; try { openDatabase(); c = db.rawQuery(strSql, null); if (c !=
-		 * null && c.getCount() > 0) { c.moveToFirst(); do { fields = new
-		 * Fields(); for (int i = 0; i < c.getColumnCount(); i++) {
-		 * fields.put(c.getColumnName(i), c.getString(i)); }
-		 * list.setFields(fields); } while (c.moveToNext()); } } finally { if (c
-		 * != null) c.close(); closeDatabase(); } return list;
-		 */
-
 		Fields fields;
 		FieldsList list = new FieldsList();
 		String strSql = "";
@@ -456,38 +508,24 @@ public class DB {
 						+ data.getStrValue("searchClient") + "%' or outletcode like '%"
 						+ data.getStrValue("searchClient") + "%') order by outletid";
 			}
-		} else if (type == 2222) // 系列
+		}
+		
+		else if (type == 313) // 促销活动(系统)
 		{
-			strSql = "select serverid,xilie from t_product where iscompete = 0 group by xilie";
+			strSql = "select str5 as str1 , str3 as str2, str4 as str3, key_id,serverid,promotionobject,str6 as int2, clientid ,empid, issubmit, isdel, updatetime,inserttime from t_promotion_plan where promotionobject = '"+data.getStrValue("promotionobject")+"' and clientid = '"+data.getStrValue("clientid")+"' and empid = '"+Rms.getUserId(context)+"'";
+		}
+
+		else if (type == 3133) // 促销活动（新增）
+		{
+			strSql = "select * from t_data_callreport where templateid = '"+data.getStrValue("templateid")+"' and clientid = '"+data.getStrValue("clientid")+"' and reportdate = '"+Tool.getCurrDate()+"'";
+		}
+		
+		else if (type == 414) //查促销方式  辅助促销活动反馈
+		{
+			strSql = "select * from t_sys_dictionary where dicttype = '"+data.getStrValue("dicttype")+"' and dictclass = '"+data.getStrValue("dictclass")+"'";
 		}
 
 		else if (type == 6) {
-			// if (data.getStrValue("code").equals(""))
-			// strSql =
-			// "select * from T_Product where (channelid='2' or channelid='0' )
-			// and serverid in (select productid from T_Product_Suite_Detail
-			// where suiteid in ( select suiteid from t_product_suite_client
-			// where clientid='"
-			// + data.getStrValue("clientId") +
-			// "' )) order by substr(productname,1)";
-			// else if (data.getStrValue("code1").equals(""))
-			// strSql =
-			// "select * from T_Product where (channelid='2' or channelid='0' )
-			// and serverid in (select productid from T_Product_Suite_Detail
-			// where suiteid in ( select suiteid from t_product_suite_client
-			// where clientid='"
-			// + data.getStrValue("clientId") + "' )) and levelid='" +
-			// data.getStrValue("code") + "' order by substr(productname,1) ";
-			// else
-			// strSql =
-			// "select * from T_Product where (channelid='2' or channelid='0' )
-			// and serverid in (select productid from T_Product_Suite_Detail
-			// where suiteid in ( select suiteid from t_product_suite_client
-			// where clientid='"
-			// + data.getStrValue("clientId") + "' )) and levelid='" +
-			// data.getStrValue("code") + "' and str10='" +
-			// data.getStrValue("code1") + "' order by substr(productname,1) ";
-
 			String channelId = "1";
 			if (Tool.getCurClient().getStrValue("channelid").equals("4"))
 				channelId = "4";
@@ -537,7 +575,7 @@ public class DB {
 		FieldsList list = new FieldsList();
 		String strSql = "";
 		if (type == 0) {
-			strSql = "SELECT o.fullname as name, o.address as address, o.outletcode as outletcode, o.OutletLevel as OutletLevel, case when  sum(c.issubmit is not null and c.issubmit is not -1) is 0 then '未拜访' else (sum(c.issubmit is 1)*100/sum(c.issubmit is not null and c.issubmit is not -1 ))||'%' end as status1, case when  sum(c.issubmit is not null and c.issubmit is not -1) is 0 then '未拜访' else  sum(c.issubmit is 1)||'/'||sum(c.issubmit is not null and c.issubmit is not -1 ) end as status,  o.outlettype as outlettype, o.serverid as serverid, o.outletcode||o.fullname  as fullname,o.facialdiscount as clienttype FROM (select * from t_visit_plan_detail where visittime like '%"
+			strSql = "SELECT o.facialdiscount as facialdiscount, o.fullname as name, o.address as address, o.outletcode as outletcode, o.OutletLevel as OutletLevel, case when  sum(c.issubmit is not null and c.issubmit is not -1) is 0 then '未拜访' else (sum(c.issubmit is 1)*100/sum(c.issubmit is not null and c.issubmit is not -1 ))||'%' end as status1, case when  sum(c.issubmit is not null and c.issubmit is not -1) is 0 then '未拜访' else  sum(c.issubmit is 1)||'/'||sum(c.issubmit is not null and c.issubmit is not -1 ) end as status,  o.outlettype as outlettype, o.serverid as serverid, o.outletcode||o.fullname  as fullname,o.facialdiscount as clienttype FROM (select * from t_visit_plan_detail where visittime like '%"
 					+ Tool.getCurrDate()
 					+ "%' OR visittime IS NULL)  vd left join (select * from t_data_callreport where ReportDate='"
 					+ Tool.getCurrDate()
@@ -763,38 +801,48 @@ public class DB {
 
 			for (DBDetailConfig detail : dc1.getFieldList()) {
 				if (detail.isQuery()) {
-					reportDetialSql += " d." + Tool.toLowerCase(detail.getFieldName()) + " as "
-							+ Tool.toLowerCase(detail.getFieldName()) + " ,";
+					if(Rms.getCheckProduct(context)){	//辅助 分销管理、库存检查 筛选模块 
+						if("22".equals(type)){	//库存检查
+							if (detail.getFieldName().equalsIgnoreCase("int1")){
+								reportDetialSql += " case when d.int1 is not null then null else d.int1 end as int1,";
+							}else{
+								reportDetialSql += " d." + Tool.toLowerCase(detail.getFieldName()) + " as "
+										+ Tool.toLowerCase(detail.getFieldName()) + " ,";
+							}
+						}else{	//分销管理
+							if (detail.getFieldName().equalsIgnoreCase("int1")){
+								reportDetialSql += " case when d.int1 == '1' then null else d.int1 end as int1,";
+							}else if (detail.getFieldName().equalsIgnoreCase("int2")){
+								reportDetialSql += " case when d.int2 == '1' then null else d.int2 end as int2,";
+							}else{
+								reportDetialSql += " d." + Tool.toLowerCase(detail.getFieldName()) + " as "
+										+ Tool.toLowerCase(detail.getFieldName()) + " ,";
+							}
+						}
+					}else{
+						reportDetialSql += " d." + Tool.toLowerCase(detail.getFieldName()) + " as "
+								+ Tool.toLowerCase(detail.getFieldName()) + " ,";
+					}
 				}
 			}
 			reportDetialSql = reportDetialSql.substring(0, reportDetialSql.length() - 1);
 
-			if("6".equals(type)){	//赠品管理报告
-				reportDetialSql += " FROM (select * from  T_Product where iscompete=0 and isnew = 3) p  left join (select * from t_data_callreportdetail where callReportId='"
-						+ reportId + "') d on p.serverid=d.productid order by d.int1";
-			}
-			else if("5".equals(type)){	//试用装检查报告
-				reportDetialSql += " FROM (select * from  T_Product where iscompete=0 and isnew = 2) p  left join (select * from t_data_callreportdetail where callReportId='"
-						+ reportId + "') d on p.serverid=d.productid order by d.int1";
-			}
-			else if("4".equals(type)){	//价格检查报告
-				reportDetialSql = "select p.key_id as key_id, p.serverid as serverid, p.productcode as productcode, p.productname as productname, "
-						+ "p.iscompete as iscompete, p.standardprice as str1,p.levelid as levelid, p.isnew as isnew, "
-						+ "d.str2 as str2, d.issubmit as issubmit,d.updatetime as updatetime, d.inserttime as inserttime, "
-						+ "d.productid as productid, d.callreportid as callreportid FROM (select * from  T_Product where iscompete=0 and isnew = 1) p "
-						+ "left join (select * from t_data_callreportdetail where callReportId='"+reportId+"') d on p.serverid=d.productid order by d.str2 desc";
-			}
-			else if("7".equals(type)){	//库存报告
-				reportDetialSql += " FROM (select * from  T_Product where iscompete=0 and isnew = 1) p  left join (select * from t_data_callreportdetail where callReportId='"
-						+ reportId + "') d on p.serverid=d.productid order by d.int1";
-			}
-			else if("12".equals(type)){	//销量日报
-				reportDetialSql += " FROM (select * from t_outlet_main where outlettype = '1') p  left join (select * from t_data_callreportdetail where callReportId='"
-						+ reportId + "') d on p.serverid=d.productid order by d.int1";
-			}
-			else{
+			if("2".equals(type)){	//分销管理(纸品)
+				reportDetialSql += " FROM (select * from  T_Product where iscompete=0 and isgroup='1' order by iskeystone desc) p  left join (select * from t_data_callreportdetail where callReportId='"
+						+ reportId + "') d on p.serverid=d.productid order by int1,int2";
+			}else if("12".equals(type)){	//分销管理(卫品)
+				reportDetialSql += " FROM (select * from  T_Product where iscompete=0 and isgroup='2' order by iskeystone desc) p  left join (select * from t_data_callreportdetail where callReportId='"
+						+ reportId + "') d on p.serverid=d.productid order by int1,int2";
+			}else if("22".equals(type)){	//库存检查
+				reportDetialSql += " FROM (select * from  T_Product where iscompete=0 order by iskeystone desc) p  left join (select * from t_data_callreportdetail where callReportId='"
+						+ reportId + "') d on p.serverid=d.productid order by int1";
+			}else{
 				reportDetialSql += " FROM (select * from  T_Product where iscompete=0) p  left join (select * from t_data_callreportdetail where callReportId='"
 						+ reportId + "') d on p.serverid=d.productid order by d.int1";
+			}
+			
+			if(Rms.getCheckProduct(context)){	//关闭辅助
+				Rms.setCheckProduct(context, false);
 			}
 		} else {
 			DBMainConfig dc1 = DBConfig.getDBMainConfig("t_data_callReportDetail");
@@ -1116,20 +1164,8 @@ public class DB {
 		SObject rpt = new SObject(temp);
 		String strSql = "";
 		if (type == 1) {
-			// strSql = "SELECT * FROM t_data_callreport where onlyType='" +
-			// temp.getOnlyType() + "' and clientId='" + code
-			// + "' and ReportDate='" + Tool.getCurrDate() + "'";
-
-			if ("-1".equals(temp.getType()) || "-2".equals(temp.getType()) || "20".equals(temp.getType()) 
-					|| "9".equals(temp.getType()) || "10".equals(temp.getType()) || "11".equals(temp.getType())
-					|| "12".equals(temp.getType())) {
-				strSql = "SELECT * FROM t_data_callreport where onlyType='" + temp.getOnlyType() + "' and ReportDate='"
-						+ Tool.getCurrDate() + "' and clientId='" + code + "'";
-			} else {
-				strSql = "SELECT * FROM t_data_callreport where onlyType='" + temp.getOnlyType() + "' and ReportDate='"
-						+ Tool.getCurrDate() + "' and clientId='" + code + "' and int1='" + Rms.getBrandID(context)
-						+ "'";
-			}
+			strSql = "SELECT * FROM t_data_callreport where onlyType='" + temp.getOnlyType() + "' and ReportDate='"
+					+ Tool.getCurrDate() + "' and clientId='" + code + "'";
 		}
 
 		Cursor c = null;
@@ -1170,18 +1206,8 @@ public class DB {
 			c.close();
 
 			if (temp.haveTable() || temp.haveDetail()) {
-				if("11".equals(temp.getType())){ 	//拜访总结
-					strSql = getReportDetialSql(temp.getType(), rpt.getField(TableInfo.TABLE_KEY), "101115", code);
-				}
-				else if("2".equals(temp.getType())){	//柜台检查
-					strSql = getReportDetialSql(temp.getType(), rpt.getField(TableInfo.TABLE_KEY), "105", code);
-				}
-				else if("9".equals(temp.getType())){	//BA检查报告
-					strSql = getReportDetialSql(temp.getType(), rpt.getField(TableInfo.TABLE_KEY), "121", code);
-				}
-				else{
-					strSql = getReportDetialSql(temp.getType(), rpt.getField(TableInfo.TABLE_KEY), "", code);
-				}
+				
+				strSql = getReportDetialSql(temp.getType(), rpt.getField(TableInfo.TABLE_KEY), "", code);
 				
 				c = db.rawQuery(strSql, null);
 
@@ -1547,6 +1573,25 @@ public class DB {
 		if (dictCode.equals("-100")) {
 			strSql = "select serverid as dictclass,productname as dictname from t_product where iscompete=1";
 		}
+
+		if (dictCode.equals("222")) {	//纸品
+			strSql = "select levelid as dictclass,levelname as dictname from t_product where isgroup = '1' group by levelid,levelname";
+		}
+
+		if (dictCode.equals("122")) {	//卫品
+			strSql = "select levelid as dictclass,levelname as dictname from t_product where isgroup = '2' group by levelid,levelname";
+		}
+		
+		if (dictCode.equals("322")) {	//库存检查
+			strSql = "select levelid as dictclass,levelname as dictname from t_product group by levelid,levelname";
+		}
+		
+		if(dictCode.equals("222") || dictCode.equals("122") || dictCode.equals("322")){	//纸品或者卫品,库存检查
+			data = new DicData();
+			data.setItemname("全部");
+			data.setValue("all");
+			items.add(data);
+		}
 		Cursor c = null;
 		try {
 			openDatabase();
@@ -1573,6 +1618,7 @@ public class DB {
 				c.close();
 			closeDatabase();
 		}
+		
 		return items;
 	}
 

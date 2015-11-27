@@ -3,10 +3,12 @@ package markettracker.util;
 import java.util.List;
 
 import markettracker.util.Constants.ControlType;
+import orient.champion.business.R;
 import markettracker.data.Fields;
 import markettracker.data.SObject;
 import markettracker.data.Template;
 import markettracker.data.UIItem;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Handler;
@@ -14,6 +16,7 @@ import android.view.Gravity;
 import android.view.View.OnClickListener;
 import android.widget.LinearLayout;
 
+@SuppressLint("ResourceAsColor")
 public class CustomLineLayoutContent extends LinearLayout {
 
 	private CEditText cEditText;
@@ -93,6 +96,11 @@ public class CustomLineLayoutContent extends LinearLayout {
 		if (item.getControlType() == ControlType.TEXT) {
 			cEditText = new CEditText(context, item);
 			cEditText.setText(data.getStrValue(item.getDataKey()));
+			
+			if("地堆一平米，地堆两平米".equals(data.getStrValue(item.getDataKey()))){
+				cEditText.setTextColor(R.color.background);
+			}
+			
 			cEditText.addTextChangedListener(new EditTextWatcher(item,
 					cEditText, data, context));
 			this.addView(cEditText);

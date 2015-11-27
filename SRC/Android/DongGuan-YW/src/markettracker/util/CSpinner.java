@@ -30,17 +30,6 @@ public class CSpinner extends TextView
 	{
 		super(context);
 		
-//		this.setBackgroundDrawable(getDrawable(1));
-//		this.setCompoundDrawablesWithIntrinsicBounds(null, null, getDrawable(2), null);
-//		this.setCompoundDrawablePadding(10);
-//		this.item = item;
-//		this.setLayoutParams(getCurLayoutParams());
-//		this.setTextColor(Tool.getTextColor(context));
-//		this.setTextSize(Tool.getTextSize());
-//		this.setGravity(Gravity.CENTER_VERTICAL);
-//		this.setPadding(20, 0, 10, 0);
-		
-		
 		this.setBackgroundDrawable(getDrawable(1));
 		this.setCompoundDrawablesWithIntrinsicBounds(null, null, getDrawable(2), null);
 		this.setCompoundDrawablePadding(Tool.dip2px(context, 10));

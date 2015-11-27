@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/tabletop" >
+    
+    <LinearLayout 
+        android:id="@+id/ll_sales_item"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:orientation="vertical">
+        <LinearLayout 
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:gravity="center"
+            android:orientation="horizontal">
+            <TextView 
+		        android:id="@+id/tv_item_from"
+		        android:layout_width="0dp"
+		        android:layout_height="match_parent"
+		        android:layout_weight="1"
+		        android:text="@string/text1"
+		        android:gravity="center_vertical"
+		        android:layout_marginLeft="10dp"
+		        android:textSize="14sp"
+		        android:textColor="@color/black"/>
+            
+            <TextView 
+		        android:id="@+id/tv_item_begin_time"
+		        android:layout_width="0dp"
+		        android:layout_height="match_parent"
+		        android:layout_weight="1"
+		        android:gravity="center"
+		        android:layout_marginRight="10dp"
+		        android:text="@string/text_begin_time"
+		        android:textSize="14sp"
+		        android:textColor="@color/black"/>
+        </LinearLayout>
+        
+        <LinearLayout 
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:gravity="center"
+            android:orientation="horizontal">
+            <TextView 
+		        android:id="@+id/tv_item_odd"
+		        android:layout_width="0dp"
+		        android:layout_height="match_parent"
+		        android:layout_weight="1"
+		        android:text="@string/oadh"
+		        android:textSize="14sp"
+		        android:gravity="center_vertical"
+		        android:layout_marginLeft="10dp"
+		        android:textColor="@color/black"/>
+            
+            <TextView 
+		        android:id="@+id/tv_item_end_time"
+		        android:layout_width="0dp"
+		        android:layout_height="match_parent"
+		        android:layout_weight="1"
+		        android:text="@string/endtime"
+		        android:textSize="14sp"
+		        android:gravity="center"
+		        android:layout_marginRight="10dp"
+		        android:textColor="@color/black"/>
+        </LinearLayout>
+    </LinearLayout>
+
+</RelativeLayout>

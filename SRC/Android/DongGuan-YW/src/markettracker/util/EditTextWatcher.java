@@ -3,13 +3,17 @@ package markettracker.util;
 import markettracker.data.Fields;
 import markettracker.data.UIItem;
 import markettracker.util.Constants.AlertType;
+import orient.champion.business.R;
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Handler;
 import android.text.Editable;
 import android.text.Selection;
 import android.text.TextWatcher;
 import android.widget.EditText;
 
+@SuppressLint("ResourceAsColor")
 public class EditTextWatcher implements TextWatcher
 {
 	
@@ -84,9 +88,10 @@ public class EditTextWatcher implements TextWatcher
 		this.data = data;
 	}
 	
-	// @Override
 	public void onTextChanged(CharSequence ss, int start, int before, int count)
 	{
+		editText.setTextColor(Color.BLACK);
+		
 		Editable editable = editText.getText();
 		int len = editable.length();
 		boolean bOK = false;
@@ -213,13 +218,11 @@ public class EditTextWatcher implements TextWatcher
 		data.put(item.getDataKey(), strData);
 	}
 	
-	// @Override
 	public void afterTextChanged(Editable s)
 	{
 		
 	}
 	
-	// @Override
 	public void beforeTextChanged(CharSequence s, int start, int count, int after)
 	{
 		

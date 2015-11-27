@@ -17,6 +17,7 @@ import markettracker.util.Constants.PropertyKey;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Handler;
+import android.widget.Toast;
 
 public class ResponseListener extends BaseResponseListener
 {
@@ -159,24 +160,15 @@ public class ResponseListener extends BaseResponseListener
 			if (sObjectsSub.get(0).getSValue("TemplateId").equals("51"))
 			{
 				reslut = list.get(0);
-//				if (reslut.isSuccess() == 1)
 				handler.sendMessage(handler.obtainMessage(type, list));
-//				else
-//					sendSyncErrMsg(handler, reslut.getErrorMsg());
 			}
 			else if (sObjectsSub.get(0).getSValue("TemplateId").equals("20000") || sObjectsSub.get(0).getSValue("TemplateId").equals("20001"))
 			{
-				// reslut = list.get(0);
-				// if (reslut.isSuccess() == 1)
-				// handler.sendMessage(handler.obtainMessage(type, list));
-				// else
 				handler.sendMessage(handler.obtainMessage(type, list.get(0)));
 			}
 			else
 			{
-				// String msg = "";
 				SObject rpt;
-				// boolean bOK=false;
 				List<String> sqlList = new ArrayList<String>();
 				for (int i = 0; i < sObjectsSub.size(); i++)
 				{
@@ -186,28 +178,19 @@ public class ResponseListener extends BaseResponseListener
 					{
 						sqlList.add("update t_data_callReport set issubmit = 1" + " where " + Constants.TableInfo.TABLE_KEY + " =" + rpt.getField(Constants.TableInfo.TABLE_KEY));
 						sqlList.add("update T_Visit_Plan_Detail set str1 ='1'" + " where clientid ='" + rpt.getSValue("ClientId") + "'");
-						// bOK = true;
 					}
 					else
 					{
-						sqlList.add("update t_data_callReport set issubmit = 2, errmsg='" + reslut.getErrorMsg() + "'" + " where " + Constants.TableInfo.TABLE_KEY + " =" + rpt.getField(Constants.TableInfo.TABLE_KEY));
-						// bOK = false;
+						sqlList.add("update t_data_callReport set issubmit = 0, errmsg='" + reslut.getErrorMsg() + "'" + " where " + Constants.TableInfo.TABLE_KEY + " =" + rpt.getField(Constants.TableInfo.TABLE_KEY));
 					}
 				}
 				Sqlite.execSqlList(context, sqlList);
-				// if (bOK)
-				
-				// List<SObject> slist = Sqlite.getSubmitObject(context);
-				// if (slist != null && slist.size() > 0) {
-				// SyncData.Upload(slist, handler, activity);
-				// } else
 				handler.sendMessage(handler.obtainMessage(type, list));
-				// else
-				// sendSyncErrMsg(handler, "部分数据上传失败，请重新上传");
 			}
 		}
-		catch (Exception ex)
+		catch (Exception e)
 		{
+			e.printStackTrace();
 			sendSyncErrMsg(handler, "数据上传失败");
 		}
 	}

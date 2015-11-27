@@ -24,13 +24,13 @@ public class ShowInfoBuilder implements OnClickListener {
 	private int type = 0;
 
 	public ShowInfoBuilder(Context context, OnClickListener l, String promName) {
-		init(context, l, promName);
+		init(context, l, promName, false);
 	}
 
 	public ShowInfoBuilder(Context context, OnClickListener l, String promName,
-			int type) {
+			int type, boolean isSystem) {
 		this.type = type;
-		init(context, l, promName);
+		init(context, l, promName, isSystem);
 	}
 
 	public void dismiss() {
@@ -46,7 +46,7 @@ public class ShowInfoBuilder implements OnClickListener {
 		}
 	}
 
-	private void init(Context context, OnClickListener l, String promName) {
+	private void init(Context context, OnClickListener l, String promName, boolean isSystem) {
 		mButtomInAnimation = AnimationUtils.loadAnimation(context,
 				R.anim.slide_buttom_in);
 		mButtomOutAnimation = AnimationUtils.loadAnimation(context,
@@ -55,22 +55,16 @@ public class ShowInfoBuilder implements OnClickListener {
 		mButtomOutAnimation
 				.setAnimationListener(new Animation.AnimationListener() {
 
-					// @Override
 					public void onAnimationStart(Animation animation) {
-						// TODO Auto-generated method stub
 					}
 
-					// @Override
 					public void onAnimationRepeat(Animation animation) {
-						// TODO Auto-generated method stub
 					}
 
-					// @Override
 					public void onAnimationEnd(Animation animation) {
 						if (alert != null) {
 							alert.dismiss();
 							alert = null;
-							// builder=null;
 						}
 					}
 				});
@@ -79,6 +73,11 @@ public class ShowInfoBuilder implements OnClickListener {
 
 		set = (Button) view.findViewById(R.id.set);
 		set.setOnClickListener(l);
+		if(isSystem){
+			set.setVisibility(View.GONE);
+		}else{
+			set.setVisibility(View.VISIBLE);
+		}
 
 		cancel = (Button) view.findViewById(R.id.cancel);
 		cancel.setOnClickListener(this);
@@ -87,13 +86,12 @@ public class ShowInfoBuilder implements OnClickListener {
 		edit.setOnClickListener(l);
 
 		if (this.type == 1) {
-			set.setText("执行");
-			edit.setText("变更");
+			set.setText("修改");
+			edit.setText("反馈");
 		}
 
 		textView = (TextView) view.findViewById(R.id.text);
 		textView.setText(promName);
-		// this.setView(view);
 
 		alert = new Dialog(context, R.style.showinfo_dialog);
 		alert.setContentView(view);

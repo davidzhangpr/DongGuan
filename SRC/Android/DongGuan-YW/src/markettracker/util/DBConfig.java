@@ -32,27 +32,21 @@ public class DBConfig {
 
 		tableList.add(getMessage());
 		
-		
 		tableList.add(getDP());
 		tableList.add(getDPPhoto());
-		
-		
+
 		tableList.add(getActivity());
-		
-		
 
 		tableList.add(getSurveyHead());
 		tableList.add(getSurveyQuestion());
 		tableList.add(getSurveyQuestionOption());
 		tableList.add(getSurveyRltClient());
 		
-		
-		//ddd
-		
 		tableList.add(getDIsplay());
 		tableList.add(getEoc());
 		
-
+		tableList.add(getPromotionPlan());
+		
 		return tableList;
 	}
 	
@@ -1661,14 +1655,32 @@ public class DBConfig {
 		d.setQuery(false);
 		m.setField(d);
 
-		d = new DBDetailConfig();
+		d = new DBDetailConfig();	//IsGroup表示品牌ID
 		d.setFieldName("isgroup");
 		d.setType(Constants.FieldType.INT);
 		d.setQuery(false);
 		m.setField(d);
 
-		d = new DBDetailConfig();
+		d = new DBDetailConfig();	//LevelId表示品类id
 		d.setFieldName("LevelId");
+		d.setType(Constants.FieldType.STRING);
+		d.setQuery(false);
+		m.setField(d);
+
+		d = new DBDetailConfig();	//LevelName表示品类名称
+		d.setFieldName("LevelName");
+		d.setType(Constants.FieldType.STRING);
+		d.setQuery(false);
+		m.setField(d);
+		
+		d = new DBDetailConfig();	//IsKeyStone=1必备产品
+		d.setFieldName("IsKeyStone");
+		d.setType(Constants.FieldType.STRING);
+		d.setQuery(false);
+		m.setField(d);
+
+		d = new DBDetailConfig();	//IsStarProduct=1主推产品
+		d.setFieldName("IsStarProduct");
 		d.setType(Constants.FieldType.STRING);
 		d.setQuery(false);
 		m.setField(d);
@@ -2005,6 +2017,66 @@ public class DBConfig {
 		d.setType(Constants.FieldType.STRING);
 		m.setField(d);
 		
+		return m;
+	}
+
+	/**
+	 * 促销计划
+	 * @return
+	 */
+	private static DBMainConfig getPromotionPlan()
+	{
+		DBMainConfig m = null;
+		DBDetailConfig d = null;
+
+		m = new DBMainConfig();
+		m.setTableName("t_promotion_plan");
+		m.setKey("serverid");
+		
+		d = new DBDetailConfig();
+		d.setFieldName("ServerId");
+		d.setType(Constants.FieldType.STRING);
+		d.setUnique(true);
+		m.setField(d);
+
+		d = new DBDetailConfig();
+		d.setFieldName("str5");
+		d.setType(Constants.FieldType.STRING);
+		d.setQuery(false);
+		m.setField(d);
+
+		d = new DBDetailConfig();
+		d.setFieldName("str3");
+		d.setType(Constants.FieldType.STRING);
+		d.setQuery(false);
+		m.setField(d);
+
+		d = new DBDetailConfig();
+		d.setFieldName("str4");
+		d.setType(Constants.FieldType.STRING);
+		d.setQuery(false);
+		m.setField(d);
+
+		d = new DBDetailConfig();
+		d.setFieldName("PromotionObject");
+		d.setType(Constants.FieldType.STRING);
+		m.setField(d);
+
+		d = new DBDetailConfig();
+		d.setFieldName("str6");
+		d.setType(Constants.FieldType.STRING);
+		m.setField(d);
+
+		d = new DBDetailConfig();
+		d.setFieldName("clientid");
+		d.setType(Constants.FieldType.STRING);
+		m.setField(d);
+
+		d = new DBDetailConfig();
+		d.setFieldName("empid");
+		d.setType(Constants.FieldType.STRING);
+		m.setField(d);
+
 		return m;
 	}
 	

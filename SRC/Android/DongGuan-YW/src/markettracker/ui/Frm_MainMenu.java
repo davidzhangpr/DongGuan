@@ -22,6 +22,7 @@ import markettracker.data.LoginResult;
 import markettracker.data.QueryConfig;
 import markettracker.data.QueryResult;
 import markettracker.data.Rms;
+import markettracker.data.SObject;
 import markettracker.data.Sqlite;
 import markettracker.data.UpsertResult;
 import android.annotation.SuppressLint;
@@ -48,9 +49,9 @@ import android.widget.TextView;
 import android.widget.LinearLayout.LayoutParams;
 
 @SuppressLint("HandlerLeak")
-public class Frm_MainMenu extends Activity implements OnClickListener,
-		OnItemClickListener {
+public class Frm_MainMenu extends Activity implements OnClickListener, OnItemClickListener {
 
+	@SuppressWarnings("unused")
 	private LinearLayout linearLayout;
 	private PlanListAdapter planListAdapter;
 	private Context context;
@@ -72,7 +73,7 @@ public class Frm_MainMenu extends Activity implements OnClickListener,
 	private List<ButtonConfig> buttonlist;
 
 	private ListView list_plan;
-	
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -91,7 +92,6 @@ public class Frm_MainMenu extends Activity implements OnClickListener,
 		Tool.setAutoTime(context);
 		super.onRestart();
 	}
-
 
 	private void showTimeoutDialog() {
 		Builder dialog = new Builder(context);
@@ -121,12 +121,15 @@ public class Frm_MainMenu extends Activity implements OnClickListener,
 		initScreen();
 		initHandler();
 		initTitle();
-		
+
 		linearLayout = (LinearLayout) findViewById(R.id.main_menu_list);
-		
+
 		exit = (Button) findViewById(R.id.exit);
 		exit.setOnClickListener(this);
-		
+
+		addhoc = (Button) findViewById(R.id.addhoc);
+		addhoc.setOnClickListener(this);
+
 		initGrid();
 		setupButton();
 
@@ -137,8 +140,7 @@ public class Frm_MainMenu extends Activity implements OnClickListener,
 	private void initTitle() {
 		title = (TextView) findViewById(R.id.title);
 		title.setText("东冠华洁纸业");
-//		title.setOnClickListener(this);
-		
+
 		username = (TextView) findViewById(R.id.tv_main_username);
 		username.setText(Rms.getEmpName(context));
 	}
@@ -153,8 +155,8 @@ public class Frm_MainMenu extends Activity implements OnClickListener,
 			lineButton = (LinearLayout) findViewById(R.id.line_rpt_button);
 	}
 
-	RelativeLayout.LayoutParams params_main = new RelativeLayout.LayoutParams(
-			LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+	RelativeLayout.LayoutParams params_main = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT,
+			LayoutParams.WRAP_CONTENT);
 
 	private void setupButton() {
 		initButton();
@@ -167,13 +169,16 @@ public class Frm_MainMenu extends Activity implements OnClickListener,
 			lineButton.addView(getRptButton(buttonlist.get(i)));
 	}
 
-	private CButtonRe msgButton;
+	private CButtonRe MattersToRemindButton;	//事项提醒
+	private CButtonRe InformationAnnouncementButton;	//信息公告
 
 	private CButtonRe getRptButton(ButtonConfig config) {
-		CButtonRe button = new CButtonRe(context, config, params_main, null,
-				this);
-		if (config.getName().equals("消息公告"))
-			msgButton = button;
+		CButtonRe button = new CButtonRe(context, config, params_main, null, this);
+		if ("事项提醒".equals(config.getName())){
+			MattersToRemindButton = button;
+		}else if("信息公告".equals(config.getName())){
+			InformationAnnouncementButton = button;
+		}
 		return button;
 	}
 
@@ -202,31 +207,28 @@ public class Frm_MainMenu extends Activity implements OnClickListener,
 			showDownLoadDialog();
 			break;
 
-		case 1:
-			intent = new Intent(context, Frm_SetPlan.class);
-			intent.putExtra("selectedDate", Tool.getCurrDate());
-			startActivityForResult(intent, 1000);
+		case 1:	//设定计划
+			SyncData.stopSyncData(activity);
+			intent = new Intent(context, Frm_Plan.class);
+			startActivityForResult(intent, 1001);
 			break;
-		// case 2:
-		// intent = new Intent(context, Frm_DayRpt.class);
-		// // intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-		// intent.putExtra("key", "1");
-		// startActivityForResult(intent, v.getId());
-		//
-		// // 1 intent = new Intent(context, Frm_ChebliePhoto.class);
-		// // // intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-		// // startActivityForResult(intent, v.getId());
-		//
-		// break;
 
-		case 3:
+		case 2:	//信息公告
+			SyncData.stopSyncData(activity);
+			intent = new Intent(context, Frm_ElectornicList.class);
+			startActivityForResult(intent, v.getId());
+			break;
+
+		case 3:	//事项提醒
 			intent = new Intent(context, Frm_MsgList.class);
 			startActivityForResult(intent, v.getId());
 			break;
-		case 4:
-			intent = new Intent(context, Frm_SelectProduct.class);
+			
+		case 4:	//系统设置
+			intent = new Intent(context, Frm_ResetPwd.class);
 			startActivityForResult(intent, v.getId());
 			break;
+			
 		case 5:
 			showMoreDialog();
 			break;
@@ -239,10 +241,6 @@ public class Frm_MainMenu extends Activity implements OnClickListener,
 		case 7:
 			intent = new Intent(context, Frm_ChebliePhoto.class);
 			startActivityForResult(intent, 7);
-			break;
-
-		case 8:
-			showResetPwd();
 			break;
 
 		case 10:
@@ -279,7 +277,10 @@ public class Frm_MainMenu extends Activity implements OnClickListener,
 				showExitDialog();
 			break;
 		case R.id.addhoc:
-			showHocBuilder();
+//			showHocBuilder();
+			intent = new Intent(context, Frm_SetPlan.class);
+			intent.putExtra("selectedDate", Tool.getCurrDate());
+			startActivityForResult(intent, 1000);
 			break;
 		default:
 			break;
@@ -306,12 +307,11 @@ public class Frm_MainMenu extends Activity implements OnClickListener,
 				startActivityForResult(intent, 4);
 			}
 		});
-		builder.setNegativeButton("修改密码",
-				new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog, int which) {
-						showResetPwd();
-					}
-				});
+		builder.setNegativeButton("修改密码", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int which) {
+				showResetPwd();
+			}
+		});
 		startHocAlertDialog = builder.create();
 		startHocAlertDialog.show();
 	}
@@ -382,11 +382,12 @@ public class Frm_MainMenu extends Activity implements OnClickListener,
 			if (requestCode == 1000) {
 				SyncData.startSyncData(activity);
 				resetGrid();
-			} else if (requestCode == 3) {
+			} else if (requestCode == 3 || requestCode == 2) {
 				SyncData.startSyncData(activity);
-
-				msgButton.refreshCount();
-
+				MattersToRemindButton.refreshCount();
+				InformationAnnouncementButton.refreshCount();
+			} else if (requestCode == 1001) {
+				SyncData.startSyncData(activity);
 			} else {
 				SyncData.startSyncData(activity);
 			}
@@ -406,17 +407,8 @@ public class Frm_MainMenu extends Activity implements OnClickListener,
 	private void showExitDialog() {
 		Builder dialog = new Builder(context);
 		dialog.setTitle("提示");
-		dialog.setMessage("是否要删除相册中的全部照片，再退出系统？");
-		dialog.setPositiveButton("退出并删除",
-				new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface arg0, int arg1) {
-						Tool.showProgress(context, "");
-						Tool.delPhotoFile();
-						Tool.stopProgress();
-						exit();
-					}
-				});
-		dialog.setNeutralButton("退出", new DialogInterface.OnClickListener() {
+		dialog.setMessage("确认退出？");
+		dialog.setPositiveButton("确定", new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface arg0, int arg1) {
 				exit();
 			}
@@ -468,8 +460,7 @@ public class Frm_MainMenu extends Activity implements OnClickListener,
 		config.setLastTime(Tool.getCurrDate());
 		config.setType(queryList.getFields(index).getStrValue("MsgType"));
 
-		Tool.showProgress(context,
-				queryList.getFields(index).getStrValue("MsgInfo"));
+		Tool.showProgress(context, queryList.getFields(index).getStrValue("MsgInfo"));
 		SyncData.Query(config, handler, activity);
 	}
 
@@ -502,6 +493,7 @@ public class Frm_MainMenu extends Activity implements OnClickListener,
 						if (selectData != null) {
 							showStartHocDialog();
 						}
+
 						break;
 					case Constants.CustomGridType.MAINMENU:
 						selectData = customGrid.getSelectData();
@@ -512,15 +504,14 @@ public class Frm_MainMenu extends Activity implements OnClickListener,
 					case Constants.PropertyKey.UPLOAD:
 						try {
 							UpsertSoapResponse resonse = (UpsertSoapResponse) msg.obj;
-							if (resonse != null && resonse.getResult() != null
-									&& resonse.getResult().size() > 0) {
-								UpsertResult result = resonse.getResult()
-										.get(0);
-								if (result.isSuccess() == 1)
+							if (resonse != null && resonse.getResult() != null && resonse.getResult().size() > 0) {
+								UpsertResult result = resonse.getResult().get(0);
+								if (result.isSuccess() == 1){
+									Tool.stopProgress();
+									Tool.showToastMsg(context, "数据上传完成", AlertType.DEFAULT);
 									resetGrid();
-								else {
-									Tool.showErrMsg(context,
-											result.getErrorMsg());
+								}else {
+									Tool.showErrMsg(context, result.getErrorMsg());
 								}
 							}
 
@@ -532,7 +523,8 @@ public class Frm_MainMenu extends Activity implements OnClickListener,
 
 					case Constants.PropertyKey.QUERY:
 						Tool.stopProgress();
-						msgButton.refreshCount();
+						MattersToRemindButton.refreshCount();
+						InformationAnnouncementButton.refreshCount();
 						break;
 
 					case Constants.PropertyKey.GETSERVERTIME:
@@ -549,11 +541,9 @@ public class Frm_MainMenu extends Activity implements OnClickListener,
 						QueryResult queryResult = (QueryResult) msg.obj;
 						if (queryResult.isSuccess() == 1) {
 							restpwdAlertDialog.dismiss();
-							Tool.showToastMsg(context,
-									queryResult.getErrorMsg(), AlertType.INFO);
+							Tool.showToastMsg(context, queryResult.getErrorMsg(), AlertType.INFO);
 						} else
-							Tool.showToastMsg(context,
-									queryResult.getErrorMsg(), AlertType.ERR);
+							Tool.showToastMsg(context, queryResult.getErrorMsg(), AlertType.ERR);
 						break;
 
 					case Constants.CustomGridType.SELECTRPT:
@@ -579,8 +569,7 @@ public class Frm_MainMenu extends Activity implements OnClickListener,
 		stopDialog(startHocAlertDialog);
 		Builder builder = new AlertDialog.Builder(context);
 		builder.setTitle("提示");
-		builder.setMessage("确认开始拜访  " + selectData.getStrValue("fullname")
-				+ "？");
+		builder.setMessage("确认开始拜访  " + selectData.getStrValue("fullname") + "？");
 		builder.setIcon(android.R.drawable.ic_dialog_info);
 
 		builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
@@ -602,8 +591,7 @@ public class Frm_MainMenu extends Activity implements OnClickListener,
 		stopDialog(startHocAlertDialog);
 		Builder builder = new AlertDialog.Builder(context);
 		builder.setTitle("提示");
-		builder.setMessage("确认开始计划外拜访  " + selectData.getStrValue("fullname")
-				+ "？");
+		builder.setMessage("确认开始计划外拜访  " + selectData.getStrValue("fullname") + "？");
 		builder.setIcon(android.R.drawable.ic_dialog_info);
 
 		builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
@@ -625,10 +613,7 @@ public class Frm_MainMenu extends Activity implements OnClickListener,
 
 		if (type == 0) {
 			String sql = "REPLACE into t_visit_plan_detail  ( clientid ,serverid ,VisitTime)values ('"
-					+ selectData.getStrValue("serverid")
-					+ "' ,'-"
-					+ selectData.getStrValue("serverid")
-					+ "','"
+					+ selectData.getStrValue("serverid") + "' ,'-" + selectData.getStrValue("serverid") + "','"
 					+ Tool.getCurrDate() + "') ";
 			Sqlite.execSingleSql(context, sql);
 		}
@@ -640,6 +625,7 @@ public class Frm_MainMenu extends Activity implements OnClickListener,
 		intent.putExtra("teminalCode", selectData.getStrValue("serverid"));
 		intent.putExtra("name", selectData.getStrValue("fullname"));
 		intent.putExtra("type", selectData.getStrValue("outlettype"));
+		intent.putExtra("facialdiscount", selectData.getStrValue("facialdiscount"));	//facialdiscount=10表示经销商；0表示普通门店
 		intent.putExtra("key", key);
 		startActivityForResult(intent, 1000);
 	}
@@ -649,18 +635,16 @@ public class Frm_MainMenu extends Activity implements OnClickListener,
 
 		selectRptBuilder = new SelectRptBuilder(context, handler, list);
 
-		selectRptBuilder.setNeutralButton("新建",
-				new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog, int which) {
-						toCall(Tool.getMyUUID());
-					}
-				});
-		selectRptBuilder.setNegativeButton("取消",
-				new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog, int which) {
+		selectRptBuilder.setNeutralButton("新建", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int which) {
+				toCall(Tool.getMyUUID());
+			}
+		});
+		selectRptBuilder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int which) {
 
-					}
-				});
+			}
+		});
 
 		selectRptAlertDialog = selectRptBuilder.create();
 		selectRptAlertDialog.show();
