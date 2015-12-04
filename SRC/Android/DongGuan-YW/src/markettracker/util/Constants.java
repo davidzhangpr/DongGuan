@@ -244,4 +244,9 @@ abstract public interface Constants {
 		final static String VERSIONID = "UserIdVersion__c";
 
 	}
+	
+	interface Locations {
+		final static int RELOCATION = 200;
+		final static int ENDLOCATION = 300;
+	}
 }

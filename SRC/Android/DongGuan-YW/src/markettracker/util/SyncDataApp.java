@@ -421,7 +421,7 @@ public class SyncDataApp extends Application
 				}
 				else if (reslut.isSuccess() == -1)
 				{
-					sqlList.add("update t_message_detail set issubmit = 2, errmsg='" + reslut.getErrorMsg() + "' where serverid =" + rpt.getField("MsgId"));
+					sqlList.add("update t_message_detail set issubmit = 0, errmsg='" + reslut.getErrorMsg() + "' where serverid =" + rpt.getField("MsgId"));
 				}
 			}
 			if (sqlList.size() > 0)

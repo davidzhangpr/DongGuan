@@ -350,7 +350,7 @@ public class Frm_Plan extends Activity implements OnClickListener, OnGestureList
 			if (resultCode == RESULT_OK)
 			{
 				if (Tool.isConnect(context)) {
-					Tool.showProgress(context, "上传计划中...");
+					Tool.showProgress(context, "上传计划中...", false, null, null);
 					SyncData.startSyncData(activity);
 				} else {
 					Tool.showErrMsg(context, "请打开网络连接");
@@ -493,7 +493,7 @@ public class Frm_Plan extends Activity implements OnClickListener, OnGestureList
 		if (Rms.getIsConnent(context)) { // 是从手机打开网络连接的页面跳转过来的
 			Rms.setIsConnent(context, false);
 			if (Tool.isConnect(context)) {
-				Tool.showProgress(context, "上传计划中...");
+				Tool.showProgress(context, "上传计划中...", false, null, null);
 				SyncData.startSyncData(activity);
 			} else {
 				Tool.showErrMsg(context, "请打开网络连接");

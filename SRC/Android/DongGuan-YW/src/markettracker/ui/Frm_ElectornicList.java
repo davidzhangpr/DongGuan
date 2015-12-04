@@ -32,18 +32,21 @@ import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.style.ForegroundColorSpan;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.View.OnClickListener;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 public class Frm_ElectornicList extends Activity implements OnClickListener {
 
@@ -58,8 +61,6 @@ public class Frm_ElectornicList extends Activity implements OnClickListener {
 	private Handler handler;
 	private SyncDataApp application;
 
-	/** Called when the activity is first created. */
-
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -70,7 +71,6 @@ public class Frm_ElectornicList extends Activity implements OnClickListener {
 		
 		application = (SyncDataApp) getApplication();
 		application.pushActivity(this);
-
 	}
 
 	private void initScreen() {
@@ -100,13 +100,9 @@ public class Frm_ElectornicList extends Activity implements OnClickListener {
 					switch (msg.what) {
 
 					case 1:
-						selectTxtView.setText("  "
-								+ selectData.getStrValue("AttachmentName")
-								+ selectData.getStrValue("AttachmentType")
-								+ "(" + selectData.getStrValue("str3")
-								+ ")"
-								+ "(" + selectData.getStrValue("status")
-								+ ")");
+						mainLine.removeAllViews();
+						initTemGroupList();
+						initPage();
 						Tool.showToastMsg(context, "下载完成", AlertType.INFO);
 						break;
 					
@@ -129,14 +125,17 @@ public class Frm_ElectornicList extends Activity implements OnClickListener {
 		groupList = Sqlite.getElectornicGroups(context);
 	}
 
-	// 获取描述信息
+	/**
+	 * 获取描述信息
+	 * 
+	 * */
 	private LinearLayout initMainLine() {
 		mainLine = (LinearLayout) findViewById(R.id.list_electronic);
 		FieldsList panal;
-		for (int i = 0; i < groupList.size(); i++) {
-			panal = groupList.get(i);
-			mainLine.addView(new CTable(context, panal, getEocOnClickListener()));
-		}
+//		for (int i = 0; i < groupList.size(); i++) {
+//			panal = groupList.get(i);
+			mainLine.addView(new CTable(context, groupList, getEocOnClickListener()));
+//		}
 		return mainLine;
 	}
 
@@ -164,7 +163,7 @@ public class Frm_ElectornicList extends Activity implements OnClickListener {
 		dialog.setNegativeButton("下载", new DialogInterface.OnClickListener() {
 			// @Override
 			public void onClick(DialogInterface arg0, int arg1) {
-				Tool.showProgress(context, "正在下载");
+				Tool.showProgress(context, "正在下载", false, null, null);
 				download();
 			}
 		});

@@ -134,7 +134,7 @@ public class Frm_Login extends Activity implements OnClickListener, OnEditorActi
 				config.setLastTime(Tool.getCurrDate());
 				config.setType(queryList.getFields(index).getStrValue("MsgType"));
 				
-				Tool.showProgress(context, queryList.getFields(index).getStrValue("MsgInfo"));
+				Tool.showProgress(context, queryList.getFields(index).getStrValue("MsgInfo"), false, null, null);
 				SyncData.Query(config, handler, activity);
 			}
 			else
@@ -155,6 +155,7 @@ public class Frm_Login extends Activity implements OnClickListener, OnEditorActi
 						Sqlite.execSingleSql(context, "delete from t_psq_question where psqid in( select psqid from t_psq where updatetime <'" + date + "')");
 						Sqlite.execSingleSql(context, "delete from t_psq where updatetime <'" + date + "'");
 						
+						Sqlite.execSingleSql(context, "delete from t_promotion_plan");
 					}
 					Sqlite.execSingleSql(context, "delete from t_data_callReportPhoto");
 					queryList = loginResult.getMsgTypeList();
@@ -178,7 +179,7 @@ public class Frm_Login extends Activity implements OnClickListener, OnEditorActi
 					else if (queryList.getFields(index).getStrValue("MsgType").equals("GetDictionaryList"))
 						Sqlite.execSingleSql(context, "DELETE from  T_Sys_Dictionary");
 					
-					Tool.showProgress(context, queryList.getFields(index).getStrValue("MsgInfo"));
+					Tool.showProgress(context, queryList.getFields(index).getStrValue("MsgInfo"), false, null, null);
 					SyncData.Query(config, handler, activity);
 				}
 			}
@@ -233,7 +234,7 @@ public class Frm_Login extends Activity implements OnClickListener, OnEditorActi
 						case Constants.PropertyKey.GETSERVERTIME:
 							if (Tool.getServerDate().equals(Tool.getMoblieDate()))
 							{
-								Tool.showProgress(context, "正在验证用户名密码");
+								Tool.showProgress(context, "正在验证用户名密码", false, null, null);
 								sName = Tool.getString(eName);
 								sPwd = Tool.getString(ePwd);
 								index = 0;
@@ -283,7 +284,7 @@ public class Frm_Login extends Activity implements OnClickListener, OnEditorActi
 									else if (queryList.getFields(index).getStrValue("MsgType").equals("GetDictionaryList"))
 										Sqlite.execSingleSql(context, "DELETE from  T_Sys_Dictionary");
 									
-									Tool.showProgress(context, queryList.getFields(index).getStrValue("MsgInfo"));
+									Tool.showProgress(context, queryList.getFields(index).getStrValue("MsgInfo"), false, null, null);
 									SyncData.Query(config, handler, activity);
 								}
 								else
@@ -348,7 +349,7 @@ public class Frm_Login extends Activity implements OnClickListener, OnEditorActi
 			String err = checklog();
 			if (err.equals(""))
 			{
-				Tool.showProgress(context, "正在校验手机时间");
+				Tool.showProgress(context, "正在校验手机时间", false, null, null);
 
 				SyncData.GetServerTime(handler, activity);
 				
@@ -436,7 +437,7 @@ public class Frm_Login extends Activity implements OnClickListener, OnEditorActi
 	
 	void downFile(final String url)
 	{
-		Tool.showProgress(context, "正在升级，请稍候");
+		Tool.showProgress(context, "正在升级，请稍候", false, null, null);
 		new Thread()
 		{
 			public void run()

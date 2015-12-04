@@ -16,7 +16,6 @@ import markettracker.data.FieldsList;
 import markettracker.data.Rms;
 import markettracker.data.SObject;
 import markettracker.data.Sqlite;
-import markettracker.data.Template;
 import markettracker.data.UIItem;
 import android.app.Activity;
 import android.app.AlertDialog.Builder;

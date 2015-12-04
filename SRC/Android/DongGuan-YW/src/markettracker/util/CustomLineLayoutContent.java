@@ -101,6 +101,10 @@ public class CustomLineLayoutContent extends LinearLayout {
 				cEditText.setTextColor(R.color.background);
 			}
 			
+			if("实际陈列反馈".equals(item.getCaption())){
+				cEditText.setBackgroundDrawable(getResources().getDrawable(R.drawable.round_two));
+			}
+			
 			cEditText.addTextChangedListener(new EditTextWatcher(item,
 					cEditText, data, context));
 			this.addView(cEditText);
@@ -112,6 +116,11 @@ public class CustomLineLayoutContent extends LinearLayout {
 			this.addView(cSpinnerList);
 		} else if (item.getControlType() == ControlType.TAKEPHOTO) {
 			cCellTakePhoto = new CCellTakePhoto(context, object, item, listener);
+			
+			if("促销反馈拍照".equals(item.getCaption())){
+				cCellTakePhoto.setBackgroundDrawable(getResources().getDrawable(R.drawable.round_two));
+			}
+			
 			this.addView(cCellTakePhoto);
 		}
 

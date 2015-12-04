@@ -11,11 +11,11 @@ public class Panal {
 	private String id;
 	private boolean showCaption = true;
 	private boolean showGroupName = false;
-	
-	private int panalType=0;
-	
-	private String reValue="";
-	private String reDatakey="";
+
+	private int panalType = 0;
+
+	private String reValue = "";
+	private String reDatakey = "";
 
 	public List<UIItem> itemList;
 
@@ -26,7 +26,7 @@ public class Panal {
 	public void setCaption(String caption) {
 		this.caption = caption;
 	}
-	
+
 	public String getGroupName() {
 		return groupName;
 	}
@@ -42,7 +42,7 @@ public class Panal {
 	public void setShowCaption(boolean showCaption) {
 		this.showCaption = showCaption;
 	}
-	
+
 	public boolean isShowGroupName() {
 		return showGroupName;
 	}
@@ -52,7 +52,7 @@ public class Panal {
 	}
 
 	public List<UIItem> getItemList() {
-		
+
 		return itemList;
 	}
 
@@ -96,54 +96,44 @@ public class Panal {
 		this.panalType = panalType;
 	}
 
-	
-			/**
-			* 返回
-			reValue 的值
-			*@return reValue
-			*/  
-	
-		
-	public String getReValue()
-	{
+	/**
+	 * 返回 reValue 的值
+	 * 
+	 * @return reValue
+	 */
+
+	public String getReValue() {
 		return reValue;
 	}
 
-	
-			/**
-			* 设置
-			reValue 的值
-			* @param reValue
-			*/
-		
-	public void setReValue(String reValue)
-	{
+	/**
+	 * 设置 reValue 的值
+	 * 
+	 * @param reValue
+	 */
+
+	public void setReValue(String reValue) {
 		this.reValue = reValue;
 	}
 
-			
-					/**
-					* 返回
-					reDatakey 的值
-					*@return reDatakey
-					*/  
-			
-				
-			public String getReDatakey()
-			{
-				return reDatakey;
-			}
+	/**
+	 * 返回 reDatakey 的值
+	 * 
+	 * @return reDatakey
+	 */
 
-			
-					/**
-					* 设置
-					reDatakey 的值
-					* @param reDatakey
-					*/
-				
-			public void setReDatakey(String reDatakey)
-			{
-				this.reDatakey = reDatakey;
-			}
+	public String getReDatakey() {
+		return reDatakey;
+	}
+
+	/**
+	 * 设置 reDatakey 的值
+	 * 
+	 * @param reDatakey
+	 */
+
+	public void setReDatakey(String reDatakey) {
+		this.reDatakey = reDatakey;
+	}
 
 }

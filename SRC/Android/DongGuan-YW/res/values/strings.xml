@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">东冠集团－业务</string>
+    <string name="app_name">东冠业务</string>
     <string name="folder_name">DongGuan-YW/</string>
     <string name="title_login">系统登录</string>
     <string name="tv_username">账号:</string>
@@ -137,5 +137,7 @@
     <string name="endtime">结束时间：2015-11-20</string>
     <string name="yb">排班</string>
     <string name="cacnl">取消</string>
+    <string name="paper">纸 品</string>
+    <string name="weipin">卫 品</string>
 
 </resources>

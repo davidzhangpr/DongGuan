@@ -63,6 +63,7 @@ public class TemplateFactory {
 		TemplateGroup group = new TemplateGroup();
 		group.setName("事件");
 		group.setShowTitle(false);
+		group.setShowView(true);
 		
 		Template t = new Template();
 		t.setType("20");
@@ -74,6 +75,32 @@ public class TemplateFactory {
 		list.setTempGroup(group);
 
 		return list;
+	}
+	
+	/**
+	 * 进店GPS数据
+	 * @return
+	 */
+	public static Template getIntoGpsTemplate() {
+		Template t = new Template();
+		t.setType("-10");
+		t.setOnlyType(-10);
+		t.setName("进店GPS数据");
+
+		return t;
+	}
+
+	/**
+	 * 出店GPS数据
+	 * @return
+	 */
+	public static Template getOutGpsTemplate() {
+		Template t = new Template();
+		t.setType("-11");
+		t.setOnlyType(-11);
+		t.setName("出店GPS数据");
+		
+		return t;
 	}
 
 	@SuppressWarnings("unused")
@@ -242,6 +269,7 @@ public class TemplateFactory {
 		TemplateGroup group = new TemplateGroup();
 		group.setShowTitle(false);
 		group.setName("拜访目的");
+		group.setShowView(true);
 		Template t = new Template();
 		t.setType("21");
 		t.setOnlyType(21);
@@ -251,6 +279,7 @@ public class TemplateFactory {
 		
 		group = new TemplateGroup();
 		group.setShowTitle(false);
+		group.setShowView(true);
 		group.setName("库存检查");
 		t = new Template();
 		t.setType("22");
@@ -274,6 +303,7 @@ public class TemplateFactory {
 		group.setShowTitle(true);
 		group.setName("陈列检查");
 		addTemplate(context, group, "210", 1);
+		group.setShowView(true);
 		list.setTempGroup(group);
 
 		group = new TemplateGroup();
@@ -311,6 +341,7 @@ public class TemplateFactory {
 		group.setShowTitle(true);
 		group.setName("陈列检查");
 		addTemplate(context, group, "215", 11);
+		group.setShowView(true);
 		list.setTempGroup(group);
 		
 		group = new TemplateGroup();
@@ -666,11 +697,18 @@ public class TemplateFactory {
 
 	/**
 	 * 陈列检查
-	 * @param type
+	 * @param type 1 纸品,11 卫品 ; 210 纸品,215 卫品
 	 * @param onlyType
 	 * @return
 	 */
-	private static Template getDisplayCheckTemplate(String type, int onlyType) {
+	private static Template getDisplayCheckTemplate(Context context, String type, int onlyType) {
+		List<DicData> dictList;
+		if("1".equals(type)){	//纸品
+			dictList = Sqlite.getDictDataList(context, "210", "");
+		}else{	//卫品
+			dictList = Sqlite.getDictDataList(context, "215", "");
+		}
+		
 		Template t = new Template();
 		t.setType(type);
 		t.setName("陈列检查");
@@ -682,7 +720,22 @@ public class TemplateFactory {
 		panal.setType(Constants.PanalType.PANEL);
 		
 		UIItem item = new UIItem();
-		item.setCaption("陈列照片");
+		
+		if("1".equals(type)){	//纸品
+			for(DicData data : dictList){
+				if(data.getValue().equals((onlyType - 1*1000)+"")){
+					item.setCaption(data.getItemname());
+				}
+			}
+		}else{	//卫品
+			for(DicData data : dictList){
+				if(data.getValue().equals((onlyType - 11*1000)+"")){
+					item.setCaption(data.getItemname());
+				}
+			}
+		}
+		
+		
 		item.setControlType(ControlType.TAKEPHOTO);
 		item.setTitleWidth(getCallPlanTitleWidth());
 		item.setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
@@ -921,10 +974,10 @@ public class TemplateFactory {
 
 		UIItem item = new UIItem();
 		item.setCaption("拜访目的");
-		item.setControlType(ControlType.SINGLECHOICE);
+		item.setControlType(ControlType.MULTICHOICE);
 		item.setTitleWidth(getCallPlanTitleWidth());
 		item.setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
-		item.setDataKey("int1");
+		item.setDataKey("str2");
 		item.setDicId("217");
 		item.setOrientation(LinearLayout.VERTICAL);
 		panal.setItem(item);
@@ -974,7 +1027,7 @@ public class TemplateFactory {
 		panal.setItem(item);
 
 		item = new UIItem();
-		item.setCaption("库存数");
+		item.setCaption("库存/箱");
 		item.setControlType(ControlType.TEXT);
 		item.setWidth(Tool.getScreenWidth() / 4);
 		item.setVerifytype("number");
@@ -1157,9 +1210,9 @@ public class TemplateFactory {
 	public static Template getTemplate(Context context, String type) {
 		if (type.startsWith("10") || type.startsWith("110")) {	//陈列检查
 			if(type.startsWith("10")){	//纸品
-				return getDisplayCheckTemplate("1",Integer.parseInt(type));
+				return getDisplayCheckTemplate(context, "1",Integer.parseInt(type));
 			}else{	//卫品
-				return getDisplayCheckTemplate("11",Integer.parseInt(type));
+				return getDisplayCheckTemplate(context, "11",Integer.parseInt(type));
 			}
 		}
 

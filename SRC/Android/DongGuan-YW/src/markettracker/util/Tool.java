@@ -49,13 +49,16 @@ import android.graphics.Paint.FontMetrics;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
+import android.location.LocationManager;
 import android.media.ExifInterface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Environment;
+import android.os.Handler;
 import android.provider.Settings;
 import android.telephony.SmsManager;
+import android.text.format.DateFormat;
 import android.text.format.Time;
 import android.util.DisplayMetrics;
 import android.view.Display;
@@ -388,7 +391,6 @@ public class Tool {
 	}
 
 	public static int getTextColor(Context context) {
-		// return context.getResources().getColor(R.color.darkorange);
 		return context.getResources().getColor(R.color.black);
 	}
 
@@ -440,17 +442,17 @@ public class Tool {
 		return strTime + "T00:00:00Z";
 	}
 
-	private static CPDialog getProgress(Context context, String msg) {
-		mProgress = new CPDialog(context, msg);
+	private static CPDialog getProgress(Context context, String msg, boolean isLocation, android.view.View.OnClickListener listener, Handler handler) {
+		mProgress = new CPDialog(context, msg, isLocation, listener, handler);
 		return mProgress;
 	}
 
-	public static void showProgress(Context context, String msg) {
+	public static void showProgress(Context context, String msg, boolean isLocation, android.view.View.OnClickListener listener, Handler handler) {
 		try {
 			stopProgress();
-			getProgress(context, msg);
+			getProgress(context, msg, isLocation, listener, handler);
 		} catch (Exception e) {
-
+			e.printStackTrace();
 		}
 	}
 
@@ -1606,6 +1608,57 @@ public class Tool {
 		calendarGroup.add(rightNow);
 		
 		return calendarGroup;
+	}
+	
+	/**
+	 * 把日期转为字符串  
+	 * @param date
+	 * @return
+	 */
+    public static String ConverToString(Date date)  
+    {  
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");  
+          
+        return df.format(date);  
+    }  
+    
+    /**
+     * 把字符串转为日期  
+     * @param strDate
+     * @return
+     * @throws Exception
+     */
+    public static Date ConverToDate(String strDate)
+    {  
+    	try {
+    		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");  
+    		return df.parse(strDate);  
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+    	
+    	return null;
+    }  
+    
+    /**
+     * 判断gps是否打开
+     * @param context
+     * @return
+     */
+    public static boolean openGPSSettings(Context context)
+	{
+		LocationManager alm = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+		if (alm.isProviderEnabled(android.location.LocationManager.GPS_PROVIDER))
+		{
+			return true;
+		}
+		else
+		{
+			showToastMsg(context, "GPS未打开", AlertType.ERR);
+			Intent myIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+			context.startActivity(myIntent);
+			return false;
+		}
 	}
 	
 }

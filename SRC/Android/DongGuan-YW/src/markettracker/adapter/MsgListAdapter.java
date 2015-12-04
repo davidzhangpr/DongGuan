@@ -7,6 +7,7 @@ import markettracker.data.FieldsList;
 import markettracker.util.Tool;
 import android.R.raw;
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,30 +35,24 @@ public class MsgListAdapter extends BaseAdapter {
 	}
 
 	public int getCount() {
-		// TODO Auto-generated method stub
 		return list.size();
 	}
 
 	public Object getItem(int position) {
-		// TODO Auto-generated method stub
 		return position;
 	}
 
 	public long getItemId(int position) {
-		// TODO Auto-generated method stub
 		return position;
 	}
 
 	public View getView(int position, View convertView, ViewGroup parent) {
-		// TODO Auto-generated method stub
 		if (convertView == null) {
 			convertView = inflater.inflate(R.layout.cell_msg, null);
 			view = new ViewHolder();
 			view.tv_client = (TextView) convertView.findViewById(R.id.name);
 			view.tv_status = (TextView) convertView.findViewById(R.id.status);
 			view.tv_date = (TextView) convertView.findViewById(R.id.date);
-//			view.img_status = (ImageView) convertView
-//					.findViewById(R.id.img_status);
 			convertView.setTag(view);
 		} else {
 			view = (ViewHolder) convertView.getTag();
@@ -67,18 +62,21 @@ public class MsgListAdapter extends BaseAdapter {
 			view.tv_client.setText(client.getStrValue("title"));
 			view.tv_status.setText(client.getStrValue("status"));
 			view.tv_date.setText(client.getStrValue("stime"));
-//			if (client.getStrValue("status1").equals("100%")) {
-//				view.img_status.setImageDrawable(success);
-//			} else {
-//				view.img_status.setImageDrawable(fail);
-//			}
+			
+			view.tv_client.setTextColor(Color.BLACK);
+			view.tv_date.setTextColor(Color.BLACK);
+			
+			if("未读".equals(client.getStrValue("status"))){
+				view.tv_status.setTextColor(Color.RED);
+			}else{
+				view.tv_status.setTextColor(Color.BLACK);
+			}
 		}
 		return convertView;
 	}
 
 	class ViewHolder {
 		TextView tv_client, tv_status,tv_date;
-//		ImageView img_status;
 	}
 
 	public Fields getFields(int index) {

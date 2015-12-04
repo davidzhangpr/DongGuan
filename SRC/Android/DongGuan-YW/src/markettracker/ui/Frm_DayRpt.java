@@ -99,7 +99,7 @@ public class Frm_DayRpt extends Activity implements OnClickListener
 		else
 			config.setType("GetVisitTotalList");
 		
-		Tool.showProgress(context, "正在查询，请稍候！");
+		Tool.showProgress(context, "正在查询，请稍候！", false, null, null);
 		SyncData.Query(config, handler, activity);
 	}
 	

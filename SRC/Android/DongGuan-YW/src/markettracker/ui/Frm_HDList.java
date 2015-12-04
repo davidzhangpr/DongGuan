@@ -275,7 +275,7 @@ public class Frm_HDList extends Activity implements OnClickListener {
 			showInfoBuild = null;
 		}
 		showInfoBuild = new ShowInfoBuilder(context, getOnClickListener(),
-				selectData.getStrValue("activitiescode"), 1, false);
+				selectData.getStrValue("activitiescode"), 1, false, false);
 		// restpwdAlertDialog = msg.create();
 		// restpwdAlertDialog.show();
 	}

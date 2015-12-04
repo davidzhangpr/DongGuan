@@ -3,11 +3,14 @@ package markettracker.util;
 import markettracker.data.Fields;
 import markettracker.data.Template;
 import orient.champion.business.R;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.text.Spannable;
+import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
+import android.text.style.BackgroundColorSpan;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.RelativeSizeSpan;
 import android.view.Gravity;
@@ -15,6 +18,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.LinearLayout.LayoutParams;
 
+@SuppressLint("ResourceAsColor")
 public class CTextView extends TextView
 {
 	
@@ -47,20 +51,11 @@ public class CTextView extends TextView
 			
 		}
 		
-//		this.setGravity(Gravity.CENTER_VERTICAL);
-//		this.setPadding(10, 0, 20, 0);
-//		this.setCompoundDrawablePadding(10);
-//		this.setLayoutParams(getCurLayoutParams());
-//		this.setBackgroundResource(R.drawable.table_mid);
-//		if (template.isComplete())
-//			this.setCompoundDrawablesWithIntrinsicBounds(getDrawable(1), null, getDrawable(2), null);
-//		else
-//			this.setCompoundDrawablesWithIntrinsicBounds(getDrawable(0), null, getDrawable(2), null);
-		
-//		this.setText(temp.getName());
 		this.setCompoundDrawablePadding(getH(5));
 		this.setTextSize(16.0f);
 		this.setGravity(Gravity.CENTER_VERTICAL);
+		this.setBackgroundResource(R.drawable.tablemid);
+		
 		this.setPadding(getH(20), 0, getH(15), 0);
 		this.setLayoutParams(getCurLayoutParams());
 		this.setBackgroundResource(R.drawable.tablemid);
@@ -68,21 +63,42 @@ public class CTextView extends TextView
 			this.setCompoundDrawablesWithIntrinsicBounds(getDrawable(1), null, getDrawable(2), null);
 		else
 			this.setCompoundDrawablesWithIntrinsicBounds(getDrawable(0), null, getDrawable(2), null);
-		// this.setOnClickListener(this);
+		
 	}
 	
+	@SuppressLint("ResourceAsColor")
 	public CTextView(Context context, Fields field) {
 		super(context);
 		ziliaoField = field;
-		// this.clientType = clientType;
 		this.setTextColor(Tool.getTextColor(context));
-		// Double size=Double.parseDouble(field.getStrValue("fileSize"))/1024;
-		// DecimalFormat df = new DecimalFormat("########0.00");
-		// size = Double.parseDouble(df.format(size));
-		// this.setBackgroundDrawable(getDrawable(R.drawable.round_white));
-		this.setText("  " + field.getStrValue("AttachmentName")
-				+ field.getStrValue("AttachmentType")+"("+field.getStrValue("str3")+")"+"("+field.getStrValue("status")+")");
-		this.setTextSize(16);
+		
+		if("未下载".equals(field.getStrValue("status"))){
+			String text;
+			if("".equals(field.getStrValue("str3"))){	//大小
+				text = "  " + field.getStrValue("AttachmentName")
+				+ field.getStrValue("AttachmentType")+"    "+field.getStrValue("status")+"";
+			}else{
+				text = "  " + field.getStrValue("AttachmentName")
+				+ field.getStrValue("AttachmentType")+" ("+field.getStrValue("str3")+")"+"    "+field.getStrValue("status")+"";
+			}
+			
+			//设置字体样式
+			Spannable s = new SpannableString(text);
+			s.setSpan(new ForegroundColorSpan(Color.RED), text.length()-3, text.length(), 
+	                Spannable.SPAN_INCLUSIVE_INCLUSIVE);
+			
+			this.setText(s);
+		}else{
+			if("".equals(field.getStrValue("str3"))){	//大小
+				this.setText("  " + field.getStrValue("AttachmentName")
+				+ field.getStrValue("AttachmentType")+"    "+field.getStrValue("status")+"");
+			}else{
+				this.setText("  " + field.getStrValue("AttachmentName")
+				+ field.getStrValue("AttachmentType")+" ("+field.getStrValue("str3")+")"+"    "+field.getStrValue("status")+"");
+			}
+		}
+		
+		this.setTextSize(14);
 		this.setGravity(Gravity.CENTER_VERTICAL);
 		this.setPadding(Tool.dip2px(getContext(), 10), 1,
 				Tool.dip2px(getContext(), 10), 1);
@@ -94,18 +110,14 @@ public class CTextView extends TextView
 
 		Drawable arrow=getDrawable(2);
 		arrow.setBounds(0, 0, Tool.dip2px(context, 20), Tool.dip2px(context, 20));
-		Drawable tubiao=getDrawable(10);
-		tubiao.setBounds(0, 0, Tool.dip2px(context, 40), Tool.dip2px(context, 40));
-		this.setCompoundDrawables(tubiao, null, arrow, null);
 		
-//		this.setCompoundDrawablesWithIntrinsicBounds(getDrawable(10), null,
-//				getDrawable(2), null);
-		// this.setOnClickListener(this);
-
-		// refresh();
+//		Drawable tubiao=getDrawable(10);
+//		tubiao.setBounds(0, 0, Tool.dip2px(context, 40), Tool.dip2px(context, 40));
+		
+		this.setCompoundDrawables(null, null, arrow, null);
 	}
 	
-	private int getH(int dip)// Tool.getFontHeight(16)*2
+	private int getH(int dip)
 	{
 		return Tool.dip2px(getContext(), dip);
 	}

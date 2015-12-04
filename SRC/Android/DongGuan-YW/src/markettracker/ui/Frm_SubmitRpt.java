@@ -1000,7 +1000,7 @@ public class Frm_SubmitRpt extends Activity implements OnClickListener {
 
 			list.add(obj);
 
-			Tool.showProgress(context, "正在提交美顾信息");
+			Tool.showProgress(context, "正在提交美顾信息", false, null, null);
 
 			SyncData.Upload(list, handler, activity);
 			// SyncData.uploadGDetail(list, mContext, mHandler,

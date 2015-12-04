@@ -118,7 +118,7 @@ public class Frm_ReportMenu extends Activity implements OnClickListener {
 	}
 
 	private void initTemGroupList() {
-		if("纸品".equals(name)){
+		if("纸 品".equals(name)){
 			temGroupList = TemplateFactory.getPaperProductsTemplateGroupList(context);
 		}else{
 			temGroupList = TemplateFactory.getWeiPinTemplateGroupList(context);
@@ -434,11 +434,11 @@ public class Frm_ReportMenu extends Activity implements OnClickListener {
 
 	private void finishActivity() {
 		if (checkData()) {
-			if(isResult){
-				setResult(RESULT_OK);
-			}else{
+//			if(isResult){
+//				setResult(RESULT_OK);
+//			}else{
 				setResult(RESULT_CANCELED);
-			}
+//			}
 			
 			application.pullActivity(this);
 			this.finish();

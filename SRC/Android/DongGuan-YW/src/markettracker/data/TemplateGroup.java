@@ -9,6 +9,15 @@ public class TemplateGroup {
 	private List<Template> templateList;
 	private int imgId = -1;
 	private boolean showTitle = true;
+	private boolean showView = false;
+
+	public boolean isShowView() {
+		return showView;
+	}
+
+	public void setShowView(boolean showView) {
+		this.showView = showView;
+	}
 
 	public String getId() {
 		return id;

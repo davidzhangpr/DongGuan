@@ -70,11 +70,52 @@
     <ScrollView
         android:id="@+id/sv_content"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_above="@+id/leavere"
         android:layout_below="@+id/comephoto"
+        android:visibility="gone"
         android:scrollbars="vertical" >
+        
     </ScrollView>
+    
+    <LinearLayout 
+	    android:id="@+id/ll_menu_button"
+	    android:layout_width="match_parent"
+	    android:layout_height="match_parent"
+	    android:layout_above="@+id/leavere"
+        android:layout_below="@+id/comephoto"
+        android:visibility="gone"
+        android:layout_marginTop="5dp"
+	    android:layout_gravity="center"
+	    android:orientation="vertical">
+	    
+	    <Button 
+	        android:id="@+id/btn_menu_paper"
+	        android:layout_width="match_parent"
+	        android:layout_height="0dp"
+	        android:layout_weight="1"
+	        android:text="@string/paper"
+	        android:textSize="16sp"
+	        android:textColor="@color/top_bg"
+	        android:textStyle="bold"
+	        android:layout_margin="40dp"
+	        android:background="@drawable/btn_selector_menu"/>
+	
+	    <Button 
+	        android:id="@+id/btn_menu_weipin"
+	        android:layout_width="match_parent"
+	        android:layout_height="0dp"
+	        android:layout_weight="1"
+	        android:text="@string/weipin"
+	        android:textSize="16sp"
+	        android:textColor="@color/top_bg"
+	        android:textStyle="bold"
+	        android:layout_marginLeft="40dp"
+	        android:layout_marginRight="40dp"
+	        android:layout_marginBottom="40dp"
+	        android:background="@drawable/btn_selector_menu"/>
+            
+    </LinearLayout>
 
     <RelativeLayout
         android:id="@+id/leavere"

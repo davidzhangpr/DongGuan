@@ -300,7 +300,7 @@ public class DB {
 		
 		String strSql = "";
 		if(type == 2){	//信息公告
-			strSql = "select count(issubmit) as count from t_train_list where isdel = 0 and issubmit != 0";
+			strSql = "select count(issubmit) as count from t_train_list where isdel = 0 and issubmit <> 0 and str1 <> ''";
 		}else if(type == 3){	//事项提醒
 			strSql = "select sum(count) as count from (select count(*) as count from t_message_detail where status!='已读' union "
 					+ "select count(*) as count from t_psq_payout where clienttype=0 and issubmit !=1)";
@@ -485,7 +485,7 @@ public class DB {
 		if (type == 0)
 			strSql = "select t.serverid as serverid, t.fullname as terminalname from (select * from  T_Visit_Plan_Detail where visittime ='"
 					+ data.getStrValue("date")
-					+ "' and isdel=0 and issubmit!=2)plan left join t_outlet_main t on plan.clientid=t.serverid order by cast(t.outletid as int)";
+					+ "' and isdel=0 and issubmit!=2)plan left join t_outlet_main t on plan.clientid=t.serverid order by t.outlettype desc";
 		else if (type == 2)
 			strSql = "select serverid ,title,content, strftime('%Y-%m-%d',stime) as stime,sender,status from t_message_detail  order by status desc,stime desc limit 50 ";
 		else if (type == 3)
@@ -497,7 +497,7 @@ public class DB {
 		} else if (type == 5) {
 			strSql = "SELECT t.* ,case when p.key_id is not null then 1 else 0 end as selected FROM t_outlet_main t left join (select * from  T_Visit_Plan_Detail  where visittime ='"
 					+ data.getStrValue("date")
-					+ "' and isdel=0 and issubmit!=2) p on t.serverid=p.clientid order by selected desc,cast(outletid as int) limit 50";
+					+ "' and isdel=0 and issubmit!=2) p on t.serverid=p.clientid order by selected desc,t.outlettype desc,cast(outletid as int) limit 50";
 		}
 
 		else if (type == 66) {
@@ -512,7 +512,7 @@ public class DB {
 		
 		else if (type == 313) // 促销活动(系统)
 		{
-			strSql = "select str5 as str1 , str3 as str2, str4 as str3, key_id,serverid,promotionobject,str6 as int2, clientid ,empid, issubmit, isdel, updatetime,inserttime from t_promotion_plan where promotionobject = '"+data.getStrValue("promotionobject")+"' and clientid = '"+data.getStrValue("clientid")+"' and empid = '"+Rms.getUserId(context)+"'";
+			strSql = "select isfeedback,str5 as str1 , str3 as str2, str4 as str3, key_id,serverid,promotionobject,promotionsource,str6 as int2, clientid ,empid, issubmit, isdel, updatetime,inserttime from t_promotion_plan where promotionobject = '"+data.getStrValue("promotionobject")+"' and clientid = '"+data.getStrValue("clientid")+"' and empid = '"+Rms.getUserId(context)+"' order by promotionsource";
 		}
 
 		else if (type == 3133) // 促销活动（新增）
@@ -548,7 +548,7 @@ public class DB {
 		else {
 			strSql = "select * ,0 as selected from t_outlet_main where fullname like '%" + data.getStrValue("code")
 					+ "%' or outletcode like '%" + data.getStrValue("code")
-					+ "%' order by cast(outletid as int) limit 20";
+					+ "%' order by outlettype desc limit 20";
 		}
 		Cursor c = null;
 		try {
@@ -575,7 +575,7 @@ public class DB {
 		FieldsList list = new FieldsList();
 		String strSql = "";
 		if (type == 0) {
-			strSql = "SELECT o.facialdiscount as facialdiscount, o.fullname as name, o.address as address, o.outletcode as outletcode, o.OutletLevel as OutletLevel, case when  sum(c.issubmit is not null and c.issubmit is not -1) is 0 then '未拜访' else (sum(c.issubmit is 1)*100/sum(c.issubmit is not null and c.issubmit is not -1 ))||'%' end as status1, case when  sum(c.issubmit is not null and c.issubmit is not -1) is 0 then '未拜访' else  sum(c.issubmit is 1)||'/'||sum(c.issubmit is not null and c.issubmit is not -1 ) end as status,  o.outlettype as outlettype, o.serverid as serverid, o.outletcode||o.fullname  as fullname,o.facialdiscount as clienttype FROM (select * from t_visit_plan_detail where visittime like '%"
+			strSql = "SELECT o.displaytype as displaytype, o.facialdiscount as facialdiscount, o.fullname as name, o.address as address, o.outletcode as outletcode, o.OutletLevel as OutletLevel, case when  sum(c.issubmit is not null and c.issubmit is not -1) is 0 then '未拜访' else (sum(c.issubmit is 1)*100/sum(c.issubmit is not null and c.issubmit is not -1 ))||'%' end as status1, case when  sum(c.issubmit is not null and c.issubmit is not -1) is 0 then '未拜访' else  sum(c.issubmit is 1)||'/'||sum(c.issubmit is not null and c.issubmit is not -1 ) end as status,  o.outlettype as outlettype, o.serverid as serverid, o.outletcode||o.fullname  as fullname,o.facialdiscount as clienttype FROM (select * from t_visit_plan_detail where visittime like '%"
 					+ Tool.getCurrDate()
 					+ "%' OR visittime IS NULL)  vd left join (select * from t_data_callreport where ReportDate='"
 					+ Tool.getCurrDate()
@@ -639,12 +639,12 @@ public class DB {
 		else {
 			if (code.equals(""))
 				strSql = "SELECT * FROM t_outlet_main where serverid not in ( select clientid from t_visit_plan_detail  where visittime == '"
-						+ Tool.getCurrDate() + "' or visittime is null) order by cast(outletid as int) limit 20";
+						+ Tool.getCurrDate() + "' or visittime is null) order by outlettype desc limit 20";
 			else
 				strSql = "SELECT * FROM t_outlet_main where (fullname like  '%" + code + "%' or outletcode like '%"
 						+ code
 						+ "%') and serverid not in ( select clientid from t_visit_plan_detail where visittime == '"
-						+ Tool.getCurrDate() + "' or visittime is null) order by cast(outletid as int) limit 20";
+						+ Tool.getCurrDate() + "' or visittime is null) order by outlettype desc limit 20";
 		}
 		Cursor c = null;
 		try {
@@ -828,13 +828,13 @@ public class DB {
 			reportDetialSql = reportDetialSql.substring(0, reportDetialSql.length() - 1);
 
 			if("2".equals(type)){	//分销管理(纸品)
-				reportDetialSql += " FROM (select * from  T_Product where iscompete=0 and isgroup='1' order by iskeystone desc) p  left join (select * from t_data_callreportdetail where callReportId='"
+				reportDetialSql += " FROM (select * from  T_Product where iscompete=0 and isgroup='1' order by levelid) p  left join (select * from t_data_callreportdetail where callReportId='"
 						+ reportId + "') d on p.serverid=d.productid order by int1,int2";
 			}else if("12".equals(type)){	//分销管理(卫品)
-				reportDetialSql += " FROM (select * from  T_Product where iscompete=0 and isgroup='2' order by iskeystone desc) p  left join (select * from t_data_callreportdetail where callReportId='"
+				reportDetialSql += " FROM (select * from  T_Product where iscompete=0 and isgroup='2' order by levelid) p  left join (select * from t_data_callreportdetail where callReportId='"
 						+ reportId + "') d on p.serverid=d.productid order by int1,int2";
 			}else if("22".equals(type)){	//库存检查
-				reportDetialSql += " FROM (select * from  T_Product where iscompete=0 order by iskeystone desc) p  left join (select * from t_data_callreportdetail where callReportId='"
+				reportDetialSql += " FROM (select * from  T_Product where iscompete=0 order by levelid) p  left join (select * from t_data_callreportdetail where callReportId='"
 						+ reportId + "') d on p.serverid=d.productid order by int1";
 			}else{
 				reportDetialSql += " FROM (select * from  T_Product where iscompete=0) p  left join (select * from t_data_callreportdetail where callReportId='"
@@ -937,7 +937,7 @@ public class DB {
 			}
 		}
 		strSql = strSql.substring(0, strSql.length() - 1);
-		strSql += " FROM t_data_callreport where issubmit=0 and ReportDate='" + Tool.getCurrDate() + "'  limit 1";
+		strSql += " FROM t_data_callreport where issubmit=0 and ReportDate >='" + Tool.getCurrDate() + "' limit 1";
 
 		// strSql =
 		// "SELECT *, replace (str1,' ','') as str1 FROM t_data_callreport where
@@ -1164,7 +1164,7 @@ public class DB {
 		SObject rpt = new SObject(temp);
 		String strSql = "";
 		if (type == 1) {
-			strSql = "SELECT * FROM t_data_callreport where onlyType='" + temp.getOnlyType() + "' and ReportDate='"
+			strSql = "SELECT * FROM t_data_callreport where onlyType='" + temp.getOnlyType() + "' and templateid = '"+temp.getType()+"' and ReportDate='"
 					+ Tool.getCurrDate() + "' and clientId='" + code + "'";
 		}
 
@@ -1423,6 +1423,17 @@ public class DB {
 						+ rpt.getField(TableInfo.TABLE_KEY) + "'");
 				execSingleSql("DELETE FROM t_data_callreport where key_id='" + rpt.getField(TableInfo.TABLE_KEY) + "'");
 			}
+			
+			if("4".equals(rpt.getTemplateId()) || "14".equals(rpt.getTemplateId())){	//促销活动反馈
+				execSingleSql("update t_data_callreport set isfeedback = '1' where (templateid = '3' or templateid = '13') and serverid = '"+rpt.getSValue("onlytype")+"'");
+				execSingleSql("update t_promotion_plan set isfeedback = '1', updatetime = '"+Tool.getCurrDateTime()+"' where serverid = '"+rpt.getSValue("int1")+"'");
+			}
+
+			if("3".equals(rpt.getTemplateId()) || "13".equals(rpt.getTemplateId())){	//促销活动
+//				execSingleSql("update t_promotion_plan set str5 = '"+rpt.getSValue("str1")+"', str3 = '"+rpt.getSValue("str2")+"', str4 = '"+rpt.getSValue("str3")+"', str6 ='"+rpt.getSValue("int2")+"', updatetime = '"+Tool.getCurrDateTime()+"' where serverid = '"+rpt.getSValue("serverid")+"'");
+				execSingleSql("delete from t_promotion_plan where serverid = '"+rpt.getSValue("serverid")+"'");
+			}
+			
 			openDatabase();
 			beginTransaction();
 
@@ -1791,9 +1802,7 @@ public class DB {
 		List<FieldsList> list = new ArrayList<FieldsList>();
 		String strSql = "";
 
-		// strSql = "select * from T_Train_List where issubmit=-1 and isdel=0
-		// order by str2";
-		strSql = "select case when issubmit=0 then '已下载' else '未下载' end as status, * from T_Train_List where isdel=0 order by str2";
+		strSql = "select c.count ,case when t.issubmit=0 then '已下载' else '未下载' end as status, t.* from T_Train_List t LEFT JOIN (select str1,count(str1) as count from t_train_list where issubmit<>'0' group by str1) c on t.str1 = c.str1 where t.isdel=0 and t.str1 <> '' order by t.str2";
 		Cursor c = null;
 		try {
 			openDatabase();

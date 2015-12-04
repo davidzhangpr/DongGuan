@@ -255,9 +255,9 @@ public class CGrid extends View implements OnGestureListener
 				}
 			}
 		}
-		catch (Exception ex)
+		catch (Exception e)
 		{
-			
+			e.printStackTrace();
 		}
 	}
 	
@@ -334,7 +334,7 @@ public class CGrid extends View implements OnGestureListener
 				mRect.set(0, top, getWidth(), top + mCellHeight);
 				
 				mPaint.setStyle(Paint.Style.FILL_AND_STROKE);
-				mPaint.setColor(getResources().getColor(R.color.background));
+				mPaint.setColor(getResources().getColor(R.color.white));
 				canvas.drawRect(mRect, mPaint);
 				
 			}
@@ -343,7 +343,7 @@ public class CGrid extends View implements OnGestureListener
 				mRect.set(0, top, getWidth(), top + mCellHeight);
 				
 				mPaint.setStyle(Paint.Style.FILL_AND_STROKE);
-				mPaint.setColor(getResources().getColor(R.color.white));
+				mPaint.setColor(getResources().getColor(R.color.background));
 				canvas.drawRect(mRect, mPaint);
 				
 				// getContentBackground2().setBounds(0, top, getWidth(),
@@ -609,7 +609,6 @@ public class CGrid extends View implements OnGestureListener
 		return consumed;
 	}
 	
-	// @Override
 	public boolean onDown(MotionEvent event)
 	{
 		System.out.println("onDown()");
@@ -621,14 +620,12 @@ public class CGrid extends View implements OnGestureListener
 		return true;
 	}
 	
-	// @Override
 	public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY)
 	{
 		System.out.println("onFling()");
 		return false;
 	}
 	
-	// @Override
 	public void onLongPress(MotionEvent e)
 	{
 		
@@ -654,7 +651,6 @@ public class CGrid extends View implements OnGestureListener
 		
 	}
 	
-	// @Override
 	public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY)
 	{
 		System.out.println("onScroll()");
@@ -696,13 +692,11 @@ public class CGrid extends View implements OnGestureListener
 		return false;
 	}
 	
-	// @Override
 	public void onShowPress(MotionEvent e)
 	{
 		System.out.println("onShowPress()");
 	}
 	
-	// @Override
 	public boolean onSingleTapUp(MotionEvent e)
 	{
 		System.out.println("onSingleTapUp()");
@@ -924,7 +918,6 @@ public class CGrid extends View implements OnGestureListener
 	
 	private void init()
 	{
-		
 		mPaint.setAntiAlias(true);
 		
 		mCellHeight = Tool.dip2px(getContext(), 45);
@@ -939,7 +932,6 @@ public class CGrid extends View implements OnGestureListener
 		// int restWidth;// 剩余宽度
 		for (int i = 0; i < mTotalColums; i++)
 		{
-			
 			ui = getCurrUIItem(i);
 			
 			if (ui.getWidth() > 0)

@@ -234,7 +234,7 @@ public class Frm_ChebliePhoto extends Activity implements OnClickListener {
 		config.setLastTime(Tool.getCurrDate());
 		config.setType("GetDisplayMsgList");
 
-		Tool.showProgress(context, "正在查询陈列图");
+		Tool.showProgress(context, "正在查询陈列图", false, null, null);
 		SyncData.Query(config, handler, activity);
 	}
 

@@ -11,6 +11,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.LinearLayout.LayoutParams;
+import markettracker.util.Constants.AlertType;
 
 public class ShowInfoBuilder implements OnClickListener {
 
@@ -24,13 +25,13 @@ public class ShowInfoBuilder implements OnClickListener {
 	private int type = 0;
 
 	public ShowInfoBuilder(Context context, OnClickListener l, String promName) {
-		init(context, l, promName, false);
+		init(context, l, promName, false, false);
 	}
 
 	public ShowInfoBuilder(Context context, OnClickListener l, String promName,
-			int type, boolean isSystem) {
+			int type, boolean isSystem, boolean isFeedBack) {
 		this.type = type;
-		init(context, l, promName, isSystem);
+		init(context, l, promName, isSystem, isFeedBack);
 	}
 
 	public void dismiss() {
@@ -46,7 +47,7 @@ public class ShowInfoBuilder implements OnClickListener {
 		}
 	}
 
-	private void init(Context context, OnClickListener l, String promName, boolean isSystem) {
+	private void init(final Context context, OnClickListener l, String promName, boolean isSystem, boolean isFeedBack) {
 		mButtomInAnimation = AnimationUtils.loadAnimation(context,
 				R.anim.slide_buttom_in);
 		mButtomOutAnimation = AnimationUtils.loadAnimation(context,
@@ -72,11 +73,21 @@ public class ShowInfoBuilder implements OnClickListener {
 		view = LayoutInflater.from(context).inflate(R.layout.showinfo, null);
 
 		set = (Button) view.findViewById(R.id.set);
-		set.setOnClickListener(l);
-		if(isSystem){
+		if(isSystem){	//系统
 			set.setVisibility(View.GONE);
 		}else{
 			set.setVisibility(View.VISIBLE);
+		}
+		
+		if(isFeedBack){	//已反馈
+			set.setOnClickListener(new OnClickListener() {
+				
+				public void onClick(View arg0) {
+					Tool.showToastMsg(context, "已反馈的单店活动不能再修改", AlertType.DEFAULT);
+				}
+			});
+		}else{
+			set.setOnClickListener(l);
 		}
 
 		cancel = (Button) view.findViewById(R.id.cancel);

@@ -11,6 +11,7 @@ import markettracker.util.HocBuilder;
 import markettracker.util.ReSetPwdBuilder;
 import markettracker.util.SelectRptBuilder;
 import markettracker.util.SyncData;
+import markettracker.util.SyncDataApp;
 import markettracker.util.Tool;
 import orient.champion.business.R;
 import markettracker.adapter.PlanListAdapter;
@@ -22,7 +23,6 @@ import markettracker.data.LoginResult;
 import markettracker.data.QueryConfig;
 import markettracker.data.QueryResult;
 import markettracker.data.Rms;
-import markettracker.data.SObject;
 import markettracker.data.Sqlite;
 import markettracker.data.UpsertResult;
 import android.annotation.SuppressLint;
@@ -73,6 +73,8 @@ public class Frm_MainMenu extends Activity implements OnClickListener, OnItemCli
 	private List<ButtonConfig> buttonlist;
 
 	private ListView list_plan;
+	
+	private SyncDataApp application;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -80,6 +82,9 @@ public class Frm_MainMenu extends Activity implements OnClickListener, OnItemCli
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.main_menu);
 
+		application = (SyncDataApp) this.getApplication();
+		application.pushActivity(this);
+		
 		init();
 		Tool.setAutoTime(context);
 	}
@@ -100,7 +105,7 @@ public class Frm_MainMenu extends Activity implements OnClickListener, OnItemCli
 		dialog.setPositiveButton("确定", new DialogInterface.OnClickListener() {
 
 			public void onClick(DialogInterface arg0, int arg1) {
-				exit();
+				exits();
 			}
 		});
 		dialog.setCancelable(false);
@@ -108,7 +113,17 @@ public class Frm_MainMenu extends Activity implements OnClickListener, OnItemCli
 	}
 
 	private void exit() {
+		application.pullActivity(this);
 		android.os.Process.killProcess(android.os.Process.myPid());
+	}
+	
+	private void exits() {
+		application.pullActivity(this);
+		this.finish();
+
+		application.exit();
+		Intent intent = new Intent(this, Frm_Login.class);
+		startActivity(intent);
 	}
 
 	private void initScreen() {
@@ -277,10 +292,7 @@ public class Frm_MainMenu extends Activity implements OnClickListener, OnItemCli
 				showExitDialog();
 			break;
 		case R.id.addhoc:
-//			showHocBuilder();
-			intent = new Intent(context, Frm_SetPlan.class);
-			intent.putExtra("selectedDate", Tool.getCurrDate());
-			startActivityForResult(intent, 1000);
+			showHocBuilder();
 			break;
 		default:
 			break;
@@ -429,6 +441,7 @@ public class Frm_MainMenu extends Activity implements OnClickListener, OnItemCli
 
 		hocBuilder = new HocBuilder(context, handler);
 		hocListAlertDialog = hocBuilder.create();
+		hocListAlertDialog.setTitle("计划外");
 		hocListAlertDialog.show();
 	}
 
@@ -460,7 +473,7 @@ public class Frm_MainMenu extends Activity implements OnClickListener, OnItemCli
 		config.setLastTime(Tool.getCurrDate());
 		config.setType(queryList.getFields(index).getStrValue("MsgType"));
 
-		Tool.showProgress(context, queryList.getFields(index).getStrValue("MsgInfo"));
+		Tool.showProgress(context, queryList.getFields(index).getStrValue("MsgInfo"), false, null, null);
 		SyncData.Query(config, handler, activity);
 	}
 
@@ -626,6 +639,7 @@ public class Frm_MainMenu extends Activity implements OnClickListener, OnItemCli
 		intent.putExtra("name", selectData.getStrValue("fullname"));
 		intent.putExtra("type", selectData.getStrValue("outlettype"));
 		intent.putExtra("facialdiscount", selectData.getStrValue("facialdiscount"));	//facialdiscount=10表示经销商；0表示普通门店
+		intent.putExtra("displaytype", selectData.getStrValue("displaytype"));	
 		intent.putExtra("key", key);
 		startActivityForResult(intent, 1000);
 	}

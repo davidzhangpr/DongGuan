@@ -17,7 +17,6 @@ import android.widget.LinearLayout;
 public class CTable extends LinearLayout implements OnClickListener {
 
 	private List<View> list;
-	private boolean isShow = false;
 
 	public CTable(Context context, TemplateGroup group, List<String> complete,
 			OnClickListener listener) {
@@ -35,7 +34,12 @@ public class CTable extends LinearLayout implements OnClickListener {
 			OnClickListener listener) {
 		super(context);
 		init(group, listener);
+	}
 
+	public CTable(final Context context, List<FieldsList> groupList,
+			OnClickListener listener) {
+		super(context);
+		init(groupList, listener);
 	}
 	
 	private void init(FieldsList group, OnClickListener listener) {
@@ -54,6 +58,43 @@ public class CTable extends LinearLayout implements OnClickListener {
 			this.addView(textView);
 		}
 
+	}
+
+	private void init(List<FieldsList> groupList, OnClickListener listener) {
+		this.setLayoutParams(getCurLayoutParams());
+		this.setOrientation(LinearLayout.VERTICAL);
+		this.setPadding(1, 1, 1, 1);
+		
+		String title = "";
+		for(int i=0; i<groupList.size(); i++){
+			
+			if(!title.equals(groupList.get(i).getFields(0).getStrValue("str1"))){
+//				Title view;
+//				if(!"".equals(groupList.get(i).getFields(0).getStrValue("count")) && 
+//						Integer.parseInt(groupList.get(i).getFields(0).getStrValue("count")) > 0){
+//					view = new Title(getContext(), groupList.get(i).getFields(0).getStrValue("str1") + "（"+groupList.get(i).getFields(0).getStrValue("count")+"）" , true);
+//				}else{
+//					view = new Title(getContext(), groupList.get(i).getFields(0).getStrValue("str1"));
+//				}
+				
+				MoreTitle view = null;
+				
+				view = new MoreTitle(getContext(), groupList.get(i).getFields(0).getStrValue("str1") , groupList.get(i).getFields(0).getStrValue("count"));
+					
+				this.addView(view);
+			}
+			
+			CTextView textView;
+			for (int j = 0; j < groupList.get(i).size(); j++) {
+				textView = new CTextView(getContext(), groupList.get(i).getFields(j));
+				textView.setOnClickListener(listener);
+				this.addView(textView);
+			}
+			
+			title = groupList.get(i).getFields(0).getStrValue("str1");
+		}
+		
+		
 	}
 
 
@@ -113,7 +154,9 @@ public class CTable extends LinearLayout implements OnClickListener {
 		this.setOrientation(LinearLayout.VERTICAL);
 		if (group.isShowTitle()) {
 			Title view = new Title(getContext(), group);
+			
 			view.setOnClickListener(this);
+			
 			this.addView(view);
 		}
 		CTextView textView;
@@ -140,34 +183,27 @@ public class CTable extends LinearLayout implements OnClickListener {
 			textView.setOnClickListener(listener);
 			list.add(textView);
 			this.addView(textView);
-			// cview = new CView(getContext(), Constants.TableType.LINE);
-			// cview.setVisibility(View.GONE);
-			// this.addView(cview);
-			// list.add(cview);
 		}
-		// list.remove(view);
-		// this.removeViewAt(this.getChildCount() - 1);
-		// this.addView(new CView(getContext(), Constants.TableType.FOOT));
+		
+		for (View view : list) {
+			if(group.isShowView()){	//展示视图集
+				view.setVisibility(View.VISIBLE);
+			}else{
+				view.setVisibility(View.GONE);
+			}
+		}
 	}
 
 	public void onClick(View v) {
-		// TODO Auto-generated method stub
-
-		if (isShow)
-			((Title) v).setCompoundDrawables(R.drawable.dropdown);
-		else
-			((Title) v).setCompoundDrawables(R.drawable.dropup);
-
 		for (View view : list) {
-			if (isShow)
+			if(view.getVisibility() == View.VISIBLE){
 				view.setVisibility(View.GONE);
-			else
+				((Title) v).setCompoundDrawables(R.drawable.dropdown);
+			}else{
 				view.setVisibility(View.VISIBLE);
+				((Title) v).setCompoundDrawables(R.drawable.dropup);
+			}
 		}
-		if (isShow)
-			isShow = false;
-		else
-			isShow = true;
 	}
 
 }

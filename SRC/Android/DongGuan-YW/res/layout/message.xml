@@ -30,7 +30,7 @@
             android:layout_height="35dip"
             android:layout_centerInParent="true"
             android:gravity="center"
-            android:text="系统消息"
+            android:text="事项提醒"
             android:textColor="#ffffff"
             android:textSize="18sp" />
     </RelativeLayout>

@@ -43,6 +43,7 @@ public class HocBuilder extends Builder {
 		editText = new EditText(context);
 		editText.setHint("至少输入2个字符");
 		editText.setBackgroundResource(R.drawable.input_selector);
+		editText.setTextSize(14);
 		
 		layoutParams.bottomMargin=5;
 		editText.setLayoutParams(layoutParams);

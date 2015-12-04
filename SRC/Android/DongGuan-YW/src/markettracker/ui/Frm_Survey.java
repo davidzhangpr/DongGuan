@@ -712,7 +712,7 @@ public class Frm_Survey extends Activity implements OnClickListener
 		String errMsg = report.checkData();
 		if (errMsg.equals(""))
 		{
-			Tool.showProgress(context, "");
+			Tool.showProgress(context, "", false, null, null);
 			// if (template.haveTable())
 			// report.setDetailfields(customGrid.getDataList());
 			long index = Sqlite.saveReport(context, report);

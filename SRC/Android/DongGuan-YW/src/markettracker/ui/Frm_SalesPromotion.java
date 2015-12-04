@@ -69,8 +69,10 @@ public class Frm_SalesPromotion extends Activity implements OnClickListener {
 	
 	private FieldsList dataGroup;
 	private Fields data;
-	private int size = 0, syatemDataCount = 0;
+	private int size = 0;
 	private DataAdapter adapter;
+	
+	private boolean isUpload = false;	//是否即时上传
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -110,25 +112,25 @@ public class Frm_SalesPromotion extends Activity implements OnClickListener {
 		}
 		
 		data.Set("clientid", getIntent().getStringExtra("teminalCode"));	//门店id
-		dataGroup = Sqlite.getFieldsList(context, 313, data);	//查询系统的促销活动
-		
-		if(dataGroup.getList() != null){
-			syatemDataCount = dataGroup.getList().size();
-		}
+		dataGroup = Sqlite.getFieldsList(context, 313, data);	//查询系统的促销活动和后台返回的有效期内的新增促销活动
 		
 		addNewDateGroup();
 	}
+	
+	private FieldsList newDateGroup;
 	
 	/**
 	 * 添加新增的促销活动
 	 */
 	private void addNewDateGroup(){
-		FieldsList newDateGroup = Sqlite.getFieldsList(context, 3133, data);	//查询新增的促销活动	
+		if(dataGroup.getList() == null){
+			dataGroup.setList(new ArrayList<Fields>());
+		}
+		
+		newDateGroup = Sqlite.getFieldsList(context, 3133, data);
 		if(newDateGroup.getList() != null){
 			size = newDateGroup.getList().size();
-			for(Fields f : newDateGroup.getList()){
-				dataGroup.getList().add(f);
-			}
+			dataGroup.getList().addAll(newDateGroup.getList());
 		}
 	}
 	
@@ -160,6 +162,8 @@ public class Frm_SalesPromotion extends Activity implements OnClickListener {
 	}
 	
 	private void toRptClass() {
+		isUpload = true;	//即时上传
+		
 		Intent i = new Intent(this, Frm_Rpt.class);
 		i.putExtra("type", getIntent().getStringExtra("type"));
 		i.putExtra("name", getIntent().getStringExtra("name"));
@@ -177,16 +181,20 @@ public class Frm_SalesPromotion extends Activity implements OnClickListener {
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		try {
 			if (resultCode == RESULT_OK) {
-				for(int i = 0; i<dataGroup.getList().size(); i++){
-					if(i >= syatemDataCount){
-						dataGroup.getList().remove(i);
-					}
+				if(dataGroup.getList() != null){
+					dataGroup.getList().removeAll(dataGroup.getList());
 				}
-				addNewDateGroup();
-				adapter.notifyDataSetChanged();	//通知适配器发送改变
 				
-				Tool.showProgress(context, "数据上传中...");
-				SyncData.startSyncData(this);
+				initData();
+				
+				initListView();
+				
+				if(isUpload){
+					Tool.showProgress(context, "数据上传中...", false, null, null);
+					SyncData.startSyncData(this);
+				}else{
+					Tool.showToastMsg(context, "报告保存成功", AlertType.INFO);
+				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -263,11 +271,22 @@ public class Frm_SalesPromotion extends Activity implements OnClickListener {
 		public View getView(int position, View convertView, ViewGroup parent) {
 			// 得到item视图
 			convertView = LayoutInflater.from(context).inflate(R.layout.sales_promotion_item, null);
+			
+			RelativeLayout rl_sp_all = (RelativeLayout) convertView.findViewById(R.id.rl_sp_all);
+			if(position%2 == 0){
+				rl_sp_all.setBackgroundResource(R.color.white);
+			}else{
+				rl_sp_all.setBackgroundResource(R.color.background);
+			}
 
 			// 给相应的控件设值
 			TextView tv_item_from = (TextView) convertView.findViewById(R.id.tv_item_from);
-			if("".equals(dataGroup.getFields(position).getStrValue("empid"))){
-				tv_item_from.setText("来源：新增活动");
+			if("".equals(dataGroup.getFields(position).getStrValue("empid")) || "2".equals(dataGroup.getFields(position).getStrValue("promotionsource"))){
+				if("2".equals(dataGroup.getFields(position).getStrValue("promotionsource"))){
+					tv_item_from.setText("来源：单店活动");
+				}else{
+					tv_item_from.setText("来源：单店活动 ");
+				}
 			}else{
 				tv_item_from.setText("来源：系统活动");
 			}
@@ -306,7 +325,9 @@ public class Frm_SalesPromotion extends Activity implements OnClickListener {
 	
 	private ShowInfoBuilder showInfoBuild;
 	private int itemIndex = -1;	//用户点击的item的索引
-	private boolean isSystem = false;	//是否是系统的促销活动
+	private boolean isSystem = false;	//不是系统的单店活动
+	private boolean isFeedBack = false;	//未反馈
+	private boolean isUpdate = false;	//不可修改的往日单店活动
 	
 	private void showInfo(int position) {
 		itemIndex = position;
@@ -317,13 +338,33 @@ public class Frm_SalesPromotion extends Activity implements OnClickListener {
 		}
 		
 		if("".equals(dataGroup.getFields(position).getStrValue("empid"))){	//新增
+			if("1".equals(dataGroup.getFields(position).getStrValue("isfeedback"))){	//已反馈
+				isFeedBack = true;
+			}else{
+				isFeedBack = false;
+			}
+			
 			isSystem = false;
 			showInfoBuild = new ShowInfoBuilder(context, getOnClickListener1(),
-					"OA单号："+dataGroup.getFields(position).getStrValue("str1"), 1, isSystem);
+					"OA单号："+dataGroup.getFields(position).getStrValue("str1"), 1, isSystem, isFeedBack);
 		}else{	//系统
 			isSystem = true;
-			showInfoBuild = new ShowInfoBuilder(context, getOnClickListener1(),
-					"OA单号："+dataGroup.getFields(position).getStrValue("str1"), 1, isSystem);
+			if("2".equals(dataGroup.getFields(position).getStrValue("promotionsource"))){	//往日单店活动
+				if("1".equals(dataGroup.getFields(position).getStrValue("isfeedback"))){	//已反馈
+					isFeedBack = true;
+					isUpdate = false;
+				}else{
+					isFeedBack = false;
+					isUpdate = true;
+				}
+				
+				showInfoBuild = new ShowInfoBuilder(context, getOnClickListener1(),
+						"OA单号："+dataGroup.getFields(position).getStrValue("str1"), 1, false, isFeedBack);
+			}else{
+				showInfoBuild = new ShowInfoBuilder(context, getOnClickListener1(),
+						"OA单号："+dataGroup.getFields(position).getStrValue("str1"), 1, isSystem, false);
+			}
+			
 		}
 	}
 	
@@ -352,6 +393,8 @@ public class Frm_SalesPromotion extends Activity implements OnClickListener {
 	}
 	
 	private void toRptClass2(String type) {
+		isUpload = false;	//不即时上传
+		
 		Intent i = new Intent(this, Frm_Rpt.class);
 		i.putExtra("type", getIntent().getStringExtra("type"));
 		i.putExtra("name", getIntent().getStringExtra("name"));
@@ -369,8 +412,9 @@ public class Frm_SalesPromotion extends Activity implements OnClickListener {
 		i.putExtra("type2", type);	//促销反馈
 		
 		i.putExtra("isSystem", isSystem);	//标识是否为系统促销反馈
+		i.putExtra("isUpdate", isUpdate);	
 
-		if(isSystem){ 	//系统促销反馈
+		if(isSystem || isUpdate ){ 	//系统促销反馈 或者 可以修改
 			i.putExtra("serverid", dataGroup.getFields(itemIndex).getStrValue("serverid"));
 			i.putExtra("oaodd", dataGroup.getFields(itemIndex).getStrValue("str1"));	//OA单号
 			i.putExtra("promotion", dataGroup.getFields(itemIndex).getStrValue("int2"));		//促销方式

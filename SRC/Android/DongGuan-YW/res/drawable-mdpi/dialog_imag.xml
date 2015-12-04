@@ -19,24 +19,5 @@
             android:type="sweep"
             android:useLevel="false" />
     </shape>
-    
-    
-    
-
-    
-    <!-- <shape
-        android:innerRadius="10dip"
-        android:shape="ring"
-        android:thickness="1dip"
-        android:useLevel="false" >
-        <gradient
-            android:centerColor="#FFFFFF"
-            android:centerY="0.50"
-            android:endColor="#000000"
-            android:startColor="#4e9035"
-            
-            android:type="sweep"
-            android:useLevel="false" />
-    </shape> -->
 
 </rotate>

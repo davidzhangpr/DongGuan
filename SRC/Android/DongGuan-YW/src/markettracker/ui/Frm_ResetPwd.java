@@ -103,7 +103,7 @@ public class Frm_ResetPwd extends Activity implements OnClickListener
 			config.set("newPwd", newpwd);
 			config.setType("ResetPassword");
 			
-			Tool.showProgress(mContext, "正在修改密码，请稍候……");
+			Tool.showProgress(mContext, "正在修改密码，请稍候……", false, null, null);
 			SyncData.Query(config, mHandler, activity);
 		}
 	}

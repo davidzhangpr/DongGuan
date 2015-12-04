@@ -1,11 +1,13 @@
 package markettracker.data;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
 import markettracker.util.Constants.TableInfo;
+import markettracker.util.Tool;
 
 public class SObject {
 	private static final String TERMINAL = "clientId";
@@ -308,6 +310,38 @@ public class SObject {
 				}
 			}
 		}
+		
+		//促销活动
+		if("3".equals(template.getType()) || "13".equals(template.getType())){
+			try {
+				String beginTime = fields.getStrValue("str2");
+				String endTime = fields.getStrValue("str3");
+				
+				if(beginTime != null && !"".equals(beginTime)){
+					if(endTime != null && !"".equals(endTime)){
+						Date begin = Tool.ConverToDate(beginTime);
+						Date end = Tool.ConverToDate(endTime);
+						if(begin != null && end != null){
+							if(end.getTime() < begin.getTime()){
+								return "活动结束时间不能早于活动开始时间";
+							}
+						}else{
+							return "时间转换异常，请重新选择";
+						}
+					}else{
+						return "请选择活动结束时间";
+					}
+				}
+				
+				if((endTime != null && !"".equals(endTime)) && (beginTime == null && "".equals(beginTime))){
+					return "请选择活动开始时间";
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+				return "时间转换异常，请重新选择";
+			}
+		}
+		
 //		if (template.isPhoto() && this.getAttCount() <= 0)
 //			return "照片未拍摄";
 //

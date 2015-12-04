@@ -221,6 +221,22 @@ public class Frm_Rpt extends Activity implements OnClickListener {
 		report.setField("ClientType", this.getIntent().getStringExtra("clienttype"));
 		
 		if("3".equals(template.getType()) || "13".equals(template.getType())){
+			if(getIntent().getBooleanExtra("isUpdate", false)){	//可修改
+				template = TemplateFactory.getTemplate(context, this.getIntent().getStringExtra("type"));
+				template.setOnlyType(Integer.parseInt(getIntent().getStringExtra("serverid")));
+				report = Sqlite.getReport(context, template, this.getIntent().getStringExtra("teminalCode"), 1, key);
+				report.setField("serverid", getIntent().getStringExtra("serverid"));
+				report.setField("int5", getIntent().getStringExtra("serverid"));
+				
+				report.setField("str1", getIntent().getStringExtra("oaodd"));
+				report.setField("int2", getIntent().getStringExtra("promotion"));
+				report.setField("str2", getIntent().getStringExtra("beginTime"));
+				report.setField("str3", getIntent().getStringExtra("endTime"));
+				report.setField("ClientType", this.getIntent().getStringExtra("clienttype"));
+			}
+		}
+		
+		if("3".equals(template.getType()) || "13".equals(template.getType())){
 			if(!"".equals(getIntent().getStringExtra("type2"))){	//促销活动反馈
 				title.setText("促销活动反馈");
 				
@@ -568,16 +584,16 @@ public class Frm_Rpt extends Activity implements OnClickListener {
 
 		photoLine = (LinearLayout) findViewById(R.id.line_rpt_photo);
 
-		if (template.getOnlyType() > 5000 && template.getOnlyType() < 5999) {
-			List<DicData> list = Sqlite.getDictDataList(context, template.getPhotodict(), "");
-			int index = 0;
-
-			for (DicData dictdata : list) {
-				photo.put(index - 100, getPhotoData(dictdata));
-				photoLine.addView(new RptTable(context, dictdata, photo, getOnTouchListener(), index));
-				index++;
-			}
-		} else {
+//		if (template.getOnlyType() > 5000 && template.getOnlyType() < 5999) {
+//			List<DicData> list = Sqlite.getDictDataList(context, template.getPhotodict(), "");
+//			int index = 0;
+//
+//			for (DicData dictdata : list) {
+//				photo.put(index - 100, getPhotoData(dictdata));
+//				photoLine.addView(new RptTable(context, dictdata, photo, getOnTouchListener(), index));
+//				index++;
+//			}
+//		} else {
 			mTotalPhoto = report.getAttCount() + 1;
 			imageView = new CImageView[100];
 			Fields data;
@@ -591,7 +607,7 @@ public class Frm_Rpt extends Activity implements OnClickListener {
 				}
 				photoLine.addView(getRptPhoto(i));
 			}
-		}
+//		}
 
 //		// 纸品或者卫品的陈列检查
 //		if ("1".equals(template.getType()) || "11".equals(template.getType())){
@@ -855,7 +871,7 @@ public class Frm_Rpt extends Activity implements OnClickListener {
 		
 		String errMsg = report.checkData();
 		if (errMsg.equals("")) {
-			Tool.showProgress(context, "");
+			Tool.showProgress(context, "", false, null, null);
 			
 			if("1".equals(template.getType())){	//陈列检查（纸品）
 				report.setField("int1", (template.getOnlyType()-1000)+"");
@@ -875,7 +891,9 @@ public class Frm_Rpt extends Activity implements OnClickListener {
 				report.setField("int1", this.getIntent().getStringExtra("teminalCode"));
 				
 				if(report.getField("str10") == null || "".equals(report.getField("str10"))){
-					report.setField("str10", Tool.getMyUUID());
+					if("".equals(report.getField("int5"))){
+						report.setField("str10", Tool.getMyUUID());
+					}
 				}
 			}
 			

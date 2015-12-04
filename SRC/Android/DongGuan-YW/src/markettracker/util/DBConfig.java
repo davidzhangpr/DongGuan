@@ -1335,11 +1335,17 @@ public class DBConfig {
 		d.setFieldName("decimal9");
 		d.setType(Constants.FieldType.STRING);
 		m.setField(d);
+		
 		d = new DBDetailConfig();
 		d.setFieldName("decimal10");
 		d.setType(Constants.FieldType.STRING);
 		m.setField(d);
 
+		d = new DBDetailConfig();
+		d.setFieldName("IsFeedback");	//IsFeedback=1表示已反馈 （针对本地新增促销活动）
+		d.setType(Constants.FieldType.STRING);
+		m.setField(d);
+		
 		return m;
 	}
 
@@ -2040,30 +2046,30 @@ public class DBConfig {
 		m.setField(d);
 
 		d = new DBDetailConfig();
-		d.setFieldName("str5");
+		d.setFieldName("str5");	//OA单号
 		d.setType(Constants.FieldType.STRING);
 		d.setQuery(false);
 		m.setField(d);
 
 		d = new DBDetailConfig();
-		d.setFieldName("str3");
+		d.setFieldName("str3");	//开始时间
 		d.setType(Constants.FieldType.STRING);
 		d.setQuery(false);
 		m.setField(d);
 
 		d = new DBDetailConfig();
-		d.setFieldName("str4");
+		d.setFieldName("str4");	//结束时间
 		d.setType(Constants.FieldType.STRING);
 		d.setQuery(false);
 		m.setField(d);
 
 		d = new DBDetailConfig();
-		d.setFieldName("PromotionObject");
+		d.setFieldName("PromotionObject");	//1纸品；2卫品
 		d.setType(Constants.FieldType.STRING);
 		m.setField(d);
 
 		d = new DBDetailConfig();
-		d.setFieldName("str6");
+		d.setFieldName("str6");	//促销类型，要关联字典
 		d.setType(Constants.FieldType.STRING);
 		m.setField(d);
 
@@ -2074,6 +2080,16 @@ public class DBConfig {
 
 		d = new DBDetailConfig();
 		d.setFieldName("empid");
+		d.setType(Constants.FieldType.STRING);
+		m.setField(d);
+
+		d = new DBDetailConfig();	//1表示系统促销；2表示新增促销
+		d.setFieldName("PromotionSource");
+		d.setType(Constants.FieldType.STRING);
+		m.setField(d);
+
+		d = new DBDetailConfig();	//IsFeedback=1表示已反馈
+		d.setFieldName("IsFeedback");
 		d.setType(Constants.FieldType.STRING);
 		m.setField(d);
 
